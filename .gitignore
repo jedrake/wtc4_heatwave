@@ -1,9 +1,16 @@
-# History files
+# History files, Rproj
 .Rhistory
 .Rapp.history
+wtc4_heatwave.Rproj
 
-# Session Data files
+# Folders of data, output, and documents
+/Data
+/Doc
+/Output
+
+# Session Data files, HIEv token
 .RData
+HIEv_token.txt
 
 # Example code in package build process
 *-Ex.R
@@ -31,3 +38,4 @@ vignettes/*.pdf
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
+.Rproj.user
