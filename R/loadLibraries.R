@@ -24,6 +24,9 @@ Library <- function(pkg, ...){
 Library(doBy)
 Library(magicaxis)
 Library(calibrate)
+Library(plantecophys)
+Library(oce)
+Library(RColorBrewer)
 
 #- standard error of the mean
 se <- function(dat,na.rm=F,...){
