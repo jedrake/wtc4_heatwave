@@ -49,7 +49,7 @@ Kleaf.m <- summaryBy(Kleaf~T_treatment+HW_treatment,data=Kleaf,FUN=c(mean,se)) #
 #- plot
 
 #- set up plot
-windows(35,20)
+windows(35,15)
 par(mfrow=c(1,2),mar=c(6,7,2,1),cex.axis=1.5)
 symbols <- c(1,16)
 ptsize <- 2
@@ -76,7 +76,7 @@ textxy(X=as.Date("2016-10-27"),Y=tlp.m$TLP.mean[1],lab="Turgor loss point",offse
 
 #- label axes and add a legend
 title(main=expression(Ambient~temperature),cex.main=1.5)
-title(ylab=expression(Midday~Leaf~Water~Potential~(MPa)),cex.lab=2)
+title(ylab=expression(Psi[L-MD]~(MPa)),cex.lab=2)
 legend("bottomleft",legend=c("Control","Heatwave"),pch=21,col="black",pt.bg=c("white","darkgrey"),pt.cex=ptsize)
 box()
 legend("topright",legend=letters[1],cex=2,bty="n")
@@ -84,16 +84,16 @@ legend("topright",legend=letters[1],cex=2,bty="n")
 
 #- add an inset bar chart for Kleaf
 plotInset(17095,-1.1,17101,0.15,
-          expr={barplot(Kleaf.m$Kleaf.mean[1:2],ylim=c(0,30),col=c("white","darkgrey"),space=0,las=2,cex.axis=1,
-                        names.arg=c("Control","Heatwave"),cex.names=1)
+          expr={barplot(Kleaf.m$Kleaf.mean[1:2],ylim=c(0,30),col=c("white","darkgrey"),space=0,las=2,cex.axis=1)
             adderrorbars(x=c(0.5,1.5),y=Kleaf.m$Kleaf.mean[1:2],SE=Kleaf.m$Kleaf.se[1:2],direction="updown")
+            text(x=c(0.7,1.7),y=-4,labels=c("Control","Heatwave"),xpd=T,srt=45,pos=2)
             title(ylab=expression(K[leaf]))
             
           })
 
 #----
 #-- plot the warmed treatment
-plot(LWP.mean~Date,data=subset(lwp.m.ele,HW_treatment=="control"),ylim=c(-3,0),type="o",
+plot(LWP.mean~Date,data=subset(lwp.m.ele,HW_treatment=="control"),ylim=c(-3,0),type="o",las=1,
      pch=21,bg="white",ylab="",xlab="")
 
 #- add shaded rectangle for heatwave
@@ -113,7 +113,7 @@ textxy(X=as.Date("2016-10-27"),Y=tlp.m$TLP.mean[2],lab="Turgor loss point",offse
 
 #- label axes and add a legend
 title(main=expression(Warmed~temperature~(+3*degree*C)),cex.main=1.5)
-title(ylab=expression(Midday~Leaf~Water~Potential~(MPa)),cex.lab=2)
+title(ylab=expression(Psi[L-MD]~(MPa)),cex.lab=2)
 legend("bottomleft",legend=c("Control","Heatwave"),pch=21,col="black",pt.bg=c("white","darkgrey"),pt.cex=ptsize)
 box()
 legend("topright",legend=letters[2],cex=2,bty="n")
@@ -121,9 +121,9 @@ legend("topright",legend=letters[2],cex=2,bty="n")
 
 #- add an inset bar chart for Kleaf
 plotInset(17095,-1.1,17101,0.15,
-          expr={barplot(Kleaf.m$Kleaf.mean[3:4],ylim=c(0,30),col=c("white","darkgrey"),space=0,las=2,cex.axis=1,
-                        names.arg=c("Control","Heatwave"),cex.names=1)
+          expr={barplot(Kleaf.m$Kleaf.mean[3:4],ylim=c(0,30),col=c("white","darkgrey"),space=0,las=2,cex.axis=1)
             adderrorbars(x=c(0.5,1.5),y=Kleaf.m$Kleaf.mean[3:4],SE=Kleaf.m$Kleaf.se[3:4],direction="updown")
+            text(x=c(0.7,1.7),y=-4,labels=c("Control","Heatwave"),xpd=T,srt=45,pos=2)
             title(ylab=expression(K[leaf]))
             
           })
