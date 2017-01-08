@@ -201,3 +201,53 @@ legend("topright",legend=letters[3],cex=2,bty="n")
 
 
 
+
+
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+#- sum Photo and Trans fluxes throughout the heatwave and four following days
+
+#- subset to the desired timeframe, convert to g C and kg H2O hr-1
+tosum <- subset(wtc.m,as.Date(DateTime_hr) >= as.Date("2016-10-31") & as.Date(DateTime_hr) <= as.Date("2016-11-7"))
+tosum$Photo.g <- tosum$Photo*1e-6*12.011*60*60
+tosum$Trans.kg <- tosum$Photo*1e-3*18.015*60*60/1000
+
+#- sum across chambers. Note that there are a few NA's, which will modestly affect the sums.
+tosum.c <- summaryBy(Photo.g+Trans.kg~chamber+T_treatment+HWtrt+combotrt,data=tosum,FUN=sum,keep.names=T,na.rm=T)
+boxplot(Photo.g~HWtrt+T_treatment,data=tosum.c) # reduction with heatwave
+boxplot(Trans.kg~HWtrt+T_treatment,data=tosum.c) # no change
+
+#- calculate mean and SE of chamber sums, make grouped bar chart
+sums.m <- summaryBy(Photo.g+Trans.kg~combotrt,data=tosum.c,FUN=c(mean,se))
+
+
+#- pull out the means to plot
+A_c <- sums.m[which(sums.m$combotrt=="ambient_C"),]
+A_HW <- sums.m[which(sums.m$combotrt=="ambient_HW"),]
+E_c <- sums.m[which(sums.m$combotrt=="elevated_C"),]
+E_HW <- sums.m[which(sums.m$combotrt=="elevated_HW"),]
+
+toplot   <- as.matrix(rbind(A_c[,2:3], A_HW[,2:3], E_c[,2:3], E_HW[,2:3]))
+rownames(toplot) <- c("A_c", "A_HW", "E_c","E_HW")
+colnames(toplot) <- c("Photo","Trans")
+
+
+windows()
+par(oma=c(2,4,0,0))
+xvals <- barplot(toplot, beside=T, ylab="", names.arg=c("",""),
+        cex.names=1.5, las=1, ylim=c(0,45), col=c("blue","black","orange","red"))
+adderrorbars(x=xvals[,1],y=toplot[,1],SE=sums.m$Photo.g.se,
+             direction="updown",col="black",barlen=0.05,lwd=0.5)
+adderrorbars(x=xvals[,2],y=toplot[,2],SE=sums.m$Trans.kg.se,
+             direction="updown",col="black",barlen=0.05,lwd=0.5)
+box(bty="l")
+graphics::text(x=c(xvals[3,1]-0.5,xvals[3,2]-0.5),y=-5,xpd=NA,labels=c("Photosynthesis","Transpiration"),cex=1.8) # x-axis labels
+title(ylab=expression(Total~Flux~(g~CO[2]~m^-2*";"~kg~H[2]*O~m^-2)),cex.lab=1.8,xpd=NA) # y-axis label
+legend("topleft",legend=c("Ambient-Control","Ambient-Heatwave","Warmed-Control","Warmed-Heatwave"),
+       fill=palette()[1:4],ncol=2,bty="n",cex=1.2)
+
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+
+
+
