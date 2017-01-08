@@ -246,6 +246,11 @@ title(ylab=expression(Total~Flux~(g~CO[2]~m^-2*";"~kg~H[2]*O~m^-2)),cex.lab=1.8,
 legend("topleft",legend=c("Ambient-Control","Ambient-Heatwave","Warmed-Control","Warmed-Heatwave"),
        fill=palette()[1:4],ncol=2,bty="n",cex=1.2)
 
+
+#- calculate % change in response to heatwave for photo and trans
+sums.m2 <- summaryBy(Photo.g+Trans.kg~HWtrt,data=tosum.c,FUN=c(mean))
+(sums.m2[1,2]-sums.m2[2,2])/sums.m2[1,2] # 20% reduction in C uptake
+(sums.m2[1,3]-sums.m2[2,3])/sums.m2[1,3] # 20% reduction in H2O loss
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 
