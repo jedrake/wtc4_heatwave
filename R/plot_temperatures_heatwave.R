@@ -102,7 +102,7 @@ dat$Tleaf <- rowMeans(dat[,c("LeafT_Avg.1.","LeafT_Avg.2.")],na.rm=T)
 
 dat$Tleafmean <- rowMeans(dat[,c("Tleaf","TargTempC_Avg")])
 
-dat <- subset(dat,as.Date(DateTime_hr)>=as.Date("2016-10-29") & as.Date(DateTime_hr)<=as.Date("2016-11-6"))
+dat <- subset(dat,as.Date(DateTime_hr)>=as.Date("2016-10-29") & as.Date(DateTime_hr)<=as.Date("2016-11-10"))
 
 #- average across treatments
 dat.m <- summaryBy(.~DateTime_hr+T_treatment+HWtrt,data=dat,FUN=c(mean,se),keep.names=T)
@@ -196,6 +196,11 @@ summaryBy(TargTempC_Avg+Tair_al~HWtrt,data=dat.hw.day,FUN=mean)
 
 
 
+
+
+
+
+
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 #- calculate the percentage of leaves damaged by the heatwave
@@ -214,6 +219,95 @@ summaryBy(prop~HWtrt,data=harvest.sum)
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 
+
+
+
+
+
+
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+#- make a supplementary figure showing the met data during the flux period
+
+#- read in the flux data
+wtc1 <- read.csv("Data/WTC_TEMP-PARRA_WTCFLUX_20161028-20161115_L0.csv")
+wtc1$DateTime <- as.POSIXct(wtc1$DateTime,format="%Y-%m-%d %T",tz="GMT")
+wtc1$VPD <- RHtoVPD(RH=wtc1$RH_al,TdegC=wtc1$Tair_al)
+wtc1$DateTime_hr <- nearestTimeStep(wtc1$DateTime,nminutes=60,align="floor")
+
+#starttime <- as.POSIXct("2016-10-29 00:00:00",tz="GMT")
+#stoptime <- as.POSIXct("2016-11-11 00:00:00",tz="GMT")
+#dat <- subset(dat,as.Date(DateTime_hr)>=as.Date("2016-10-29") & as.Date(DateTime_hr)<=as.Date("2016-11-10"))
+
+wtc <- subset(wtc1,as.Date(DateTime_hr)>=as.Date("2016-10-29") & as.Date(DateTime_hr)<=as.Date("2016-11-10") & DoorCnt == 0)
+
+#-- create hourly values for subsequent averaging of fluxes
+wtc$DateTime_hr <- nearestTimeStep(wtc$DateTime,nminutes=60,align="floor")
+
+#- average PAR, VPD, FLuxCO2 and FLuxH2O for each chamber
+wtc.m1 <- summaryBy(PAR+VPD+Tair_al~DateTime_hr+chamber+T_treatment,data=subset(wtc,DoorCnt==0),
+                    FUN=mean,keep.names=T,na.rm=T)
+
+
+#- merge in the heatwave treatments and total leaf area data
+linkdf <- data.frame(chamber = levels(as.factor(wtc$chamber)),
+                     HWtrt = c("C","C","HW","HW","C","C","HW","C","HW","HW","C","HW"))#swapped C12 and C08
+
+wtc.m <- merge(wtc.m1,linkdf,by="chamber")
+wtc.m$combotrt <- factor(paste(wtc.m$T_treatment,wtc.m$HWtrt,sep="_"))
+
+#- get treatment averages for plotting
+wtc.trt <- summaryBy(PAR+VPD+Tair_al~DateTime_hr+combotrt,data=wtc.m,
+                     FUN=c(mean,se),na.rm=T)
+
+
+#----
+#- plot PAR, VPD, and temperatures
+windows(70,60)
+par(mfrow=c(5,1),mar=c(0,6,0,6),oma=c(7,0,3,0),cex.lab=1.6,xpd=F,las=1)
+palette(c("blue","black","orange","red"))
+
+#- plot PAR
+plotBy(PAR.mean~DateTime_hr,data=subset(wtc.trt,combotrt=="ambient_C"),legend=F,col="darkgrey",type="l",lwd=2,
+       ylim=c(0,2000),ylab="PPFD",xaxt="n");axis(side=4)
+axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime_hr,tz="GMT"))),las=3,cex.axis=1.5,labels=F)
+legend(x=subset(wtc.trt,combotrt=="ambient_C")$DateTime_hr[1]-120000,
+       y=2600,xpd=NA,lwd=3,col=palette()[1:4],ncol=4,cex=1.5,bty="n",
+       legend=c("Ambient-Control","Ambient-Heatwave","Warmed-Control","Warmed-Heatwave"))
+legend("topright",legend=letters[1],cex=1.4,bty="n")
+
+#- plot VPD
+plotBy(VPD.mean~DateTime_hr|combotrt,data=wtc.trt,legend=F,col=palette()[1:4],type="l",lwd=2,
+       ylim=c(0,6),ylab="VPD",xaxt="n");axis(side=4)
+adderrorbars(x=wtc.trt$DateTime_hr,y=wtc.trt$VPD.mean,SE=wtc.trt$VPD.se,direction="updown",col=wtc.trt$combotrt,barlen=0)
+axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime_hr,tz="GMT"))),las=3,cex.axis=1.5,labels=F)
+legend("topright",legend=letters[2],cex=1.4,bty="n")
+
+
+#- plot Tair
+plotBy(Tair_al.mean~DateTime_hr|combotrt,data=wtc.trt,legend=F,col=palette()[1:4],type="l",lwd=2,ylim=c(5,50),
+       ylab=expression(T[air]),xaxt="n");axis(side=4)
+adderrorbars(x=wtc.trt$DateTime_hr,y=wtc.trt$Tair_al.mean,SE=wtc.trt$Tair_al.se,direction="updown",col=wtc.trt$combotrt,barlen=0)
+axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime_hr,tz="GMT"))),las=3,cex.axis=1.5,labels=F)
+legend("topright",legend=letters[3],cex=1.4,bty="n")
+
+#- plot Tleaf (IR)
+plotBy(TargTempC_Avg.mean~DateTime_hr|combotrt,data=dat.m,legend=F,col=palette()[1:4],type="l",lwd=2,ylim=c(5,50),
+       ylab=expression(T[leaf-IR]),xaxt="n");axis(side=4)
+adderrorbars(x=dat.m$DateTime_hr,y=dat.m$TargTempC_Avg.mean,SE=dat.m$TargTempC_Avg.se,direction="updown",col=dat.m$combotrt,barlen=0)
+axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime_hr,tz="GMT"))),las=3,cex.axis=1.5,labels=F)
+legend("topright",legend=letters[4],cex=1.4,bty="n")
+
+#- plot Tleaf (TC)
+plotBy(Tleaf.mean~DateTime_hr|combotrt,data=dat.m,legend=F,col=palette()[1:4],type="l",lwd=2,ylim=c(5,50),
+       ylab=expression(T[leaf-TC]),xaxt="n");axis(side=4)
+
+adderrorbars(x=dat.m$DateTime_hr,y=dat.m$Tleaf.mean,SE=dat.m$Tleaf.se,direction="updown",col=dat.m$combotrt,barlen=0)
+axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime_hr,tz="GMT"))),las=3,cex.axis=1.5)
+legend("topright",legend=letters[5],cex=1.4,bty="n")
+
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
 
 
 
