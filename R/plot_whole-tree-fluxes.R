@@ -37,6 +37,8 @@ wtc$DateTime_hr <- nearestTimeStep(wtc$DateTime,nminutes=60,align="floor")
 #- NA-fill some crap CO2 flux data
 tonafill <- which(wtc$FluxCO2 > 0.5 | wtc$FluxCO2 < -1) # a few obvious outliers
 wtc$FluxCO2[tonafill] <- NA
+wtc$FluxH2O[tonafill] <- NA
+
 tonafill2 <- which(as.Date(wtc$DateTime_hr)==as.Date("2016-11-07") & wtc$PAR>1200 & wtc$FluxCO2 < 0.05) # some bad data when controlling temperatures
 wtc$FluxCO2[tonafill2] <- NA
 wtc$FluxH2O[tonafill2] <- NA
@@ -168,6 +170,7 @@ summaryBy(Trans~HWtrt,data=post)
 
 #- subset to relatively high light, calculate WUEi
 wtc.m.highpar <- subset(wtc.m,PAR>800 & as.Date(DateTime_hr) >= as.Date("2016-10-30") & as.Date(DateTime_hr) <= as.Date("2016-11-11"))
+wtc.m.highpar$WUEi <- with(wtc.m.highpar,FluxCO2/FluxH2O)
 
 #- NA-fill some outliers
 tonafill1 <- which(wtc.m.highpar$WUEi>40)
@@ -175,25 +178,59 @@ tonafill2 <- which(wtc.m.highpar$WUEi>15 & wtc.m.highpar$VPD>2)
 tonafill3 <- which(wtc.m.highpar$WUEi>5 & wtc.m.highpar$VPD>4)
 wtc.m.highpar$FluxCO2[c(tonafill1,tonafill2,tonafill3)] <- NA
 wtc.m.highpar$FluxH2O[c(tonafill1,tonafill2,tonafill3)] <- NA
-
 wtc.m.highpar$WUEi <- with(wtc.m.highpar,FluxCO2/FluxH2O)
 
-windows(60,80)
-par(mfrow=c(3,1),mar=c(2,6,1,4),oma=c(4,0,4,0),cex.lab=1.5,cex.axis=1.2,las=1)
-plotBy(Photo~VPD|combotrt,data=wtc.m.highpar,legend=F,pch=16,
+
+#- correlation between vpd and Tair
+lm.vpd <- lm(VPD~Tair_al,data=wtc.m.highpar)
+summary(lm.vpd)
+
+#----
+#- predict what fluxes SHOULD have been
+Tvals <- seq(18,45, length.out=101)
+VPDs <- predict(lm.vpd,newdata=data.frame(Tair_al=Tvals))
+predicts <- Photosyn(VPD=VPDs,Tleaf=Tvals)
+#----
+
+windows(90,80)
+par(mfrow=c(3,2),mar=c(2,6,1,4),oma=c(4,0,4,0),cex.lab=1.5,cex.axis=1.2,las=1)
+
+#- photo vs. Tair
+plotBy(Photo~Tair_al|combotrt,data=wtc.m.highpar,legend=F,pch=16,
        ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)));abline(h=0);axis(4)
-legend(x=1,y=17,xpd=NA,pch=16,col=palette()[1:4],ncol=2,cex=1.5,bty="n",
+legend(x=20,y=17,xpd=NA,pch=16,col=palette()[1:4],ncol=4,cex=1.5,bty="n",
        legend=c("Ambient-Control","Ambient-Heatwave","Warmed-Control","Warmed-Heatwave"))
 legend("topright",legend=letters[1],cex=2,bty="n")
 
-plotBy(Trans~VPD|combotrt,data=wtc.m.highpar,legend=F,pch=16,
+# photo vs. VPD
+plotBy(Photo~VPD|combotrt,data=wtc.m.highpar,legend=F,pch=16,
+       ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)));abline(h=0);axis(4)
+legend("topright",legend=letters[4],cex=2,bty="n")
+
+#Trans vs. Tair
+plotBy(Trans~Tair_al|combotrt,data=wtc.m.highpar,legend=F,pch=16,
        ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)));axis(4)
 legend("topright",legend=letters[2],cex=2,bty="n")
 
+#- trans vs. VPD
+plotBy(Trans~VPD|combotrt,data=wtc.m.highpar,legend=F,pch=16,
+       ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)));axis(4)
+legend("topright",legend=letters[5],cex=2,bty="n")
+
+#- wuei vs. Tair
+plotBy(WUEi~Tair_al|combotrt,data=wtc.m.highpar,legend=F,pch=16,
+       ylab=expression(A[canopy]~"/"~E[canopy]));abline(h=0);axis(4)
+legend("topright",legend=letters[3],cex=2,bty="n")
+
+#- wuei vs. VPD
 plotBy(WUEi~VPD|combotrt,data=wtc.m.highpar,legend=F,pch=16,
        ylab=expression(A[canopy]~"/"~E[canopy]));abline(h=0);axis(4)
-title(xlab=expression(VPD~(kPa)),outer=T,line=2,cex.lab=2)
-legend("topright",legend=letters[3],cex=2,bty="n")
+legend("topright",legend=letters[6],cex=2,bty="n")
+
+
+title(xlab=expression(T[air]~(degree*C)),outer=T,line=2,cex.lab=2,adj=0.25)
+title(xlab=expression(VPD~(kPa)),outer=T,line=2,cex.lab=2,adj=0.8)
+
 
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
@@ -242,7 +279,7 @@ adderrorbars(x=xvals[,2],y=toplot[,2],SE=sums.m$Trans.kg.se,
              direction="updown",col="black",barlen=0.05,lwd=0.5)
 box(bty="l")
 graphics::text(x=c(xvals[3,1]-0.5,xvals[3,2]-0.5),y=-5,xpd=NA,labels=c("Photosynthesis","Transpiration"),cex=1.8) # x-axis labels
-title(ylab=expression(Total~Flux~(g~CO[2]~m^-2*";"~kg~H[2]*O~m^-2)),cex.lab=1.8,xpd=NA) # y-axis label
+title(ylab=expression(Total~Flux~(g~C~m^-2*";"~kg~H[2]*O~m^-2)),cex.lab=1.8,xpd=NA) # y-axis label
 legend("topleft",legend=c("Ambient-Control","Ambient-Heatwave","Warmed-Control","Warmed-Heatwave"),
        fill=palette()[1:4],ncol=2,bty="n",cex=1.2)
 
