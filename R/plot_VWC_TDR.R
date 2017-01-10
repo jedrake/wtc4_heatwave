@@ -142,3 +142,30 @@ vwc.hw$VWCall <- rowMeans(vwc.hw[,c("VW_surface","VW_Avg.2.","VW_Avg.3.")])
 mean(vwc.hw$VWCall)
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+#- download lots of of the soil volumetric water content data from HIEv, for WTC4, to figure out how long
+#    the trees were droughted before the heatwave
+
+files <- searchHIEv("WTC_AUTO_C[0-9]{1,2}_SOILVARS")
+d <- downloadTOA5("WTC_AUTO_C[0-9]{1,2}_SOILVARS", startDate="2016-9-1", endDate="2016-12-1",
+                  topath="C:/Repos/wtc4_heatwave/Data/fromHIEv",maxnfiles=100,
+                  cachefile="C:/Repos/wtc4_heatwave/Data/fromHIEv/wtc4cache_VWC.rdata")
+d$chamber <- as.factor(substr(d$Source,start=10,stop=12)) # extract the chamber number from the filename
+d$T_treatment <- as.factor(ifelse(as.numeric(substr(as.character(d$chamber),start=2,stop=3)) %% 2 == 0, "elevated","ambient"))
+d$Source <- d$RECORD <- NULL
+#d$VW_Avg <- rowMeans(d[,c("VW_Avg.1.","VW_Avg.2.","VW_Avg.3.")])
+
+#- average across everything
+d.m <- summaryBy(VW_Avg.1.~Date,data=d,FUN=mean,keep.names=T)
+plot(VW_Avg.1.~Date,data=d.m,type="o")
