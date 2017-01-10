@@ -129,3 +129,57 @@ plotInset(17095,-1.1,17101,0.15,
           })
 
 #----------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+#----------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------
+#- Plot native embolism as well
+embolism <- read.csv("Data/Hydraulics/WTC_TEMP_CM_PARRA_NATIVE-EMBOLISM-HEATWAVE_20161018-20161104_L0.csv")
+embolism$combotrt <- factor(paste(embolism$T_treatment,embolism$HW_treatment,sep="_"))
+
+embolism.m <- summaryBy(plc~T_treatment+HW_treatment+phase+combotrt,data=embolism,FUN=c(mean,se))
+
+
+
+#- pull out the means to plot
+A_c <- embolism.m[which(embolism.m$combotrt=="ambient_control"),]
+A_HW <- embolism.m[which(embolism.m$combotrt=="ambient_heatwave"),]
+E_c <- embolism.m[which(embolism.m$combotrt=="elevated_control"),]
+E_HW <- embolism.m[which(embolism.m$combotrt=="elevated_heatwave"),]
+
+toplot   <- as.matrix(rbind(A_c[,5], A_HW[,5], E_c[,5], E_HW[,5]))
+rownames(toplot) <- c("A_c", "A_HW", "E_c","E_HW")
+colnames(toplot) <- c("Pre","Post")
+
+
+windows()
+par(mar=c(12,8,1,1),oma=c(0,0,0,0))
+xvals <- barplot(t(toplot), beside=T, ylab="", names.arg=rep("",8),
+                 cex.names=1.5, las=1, ylim=c(0,20), col=c("blue","blue","darkgrey","darkgrey","orange","orange","red","red"))
+
+#- add shading
+xvals <- barplot(t(toplot), beside=T, ylab="", names.arg=rep("",8),add=T,
+                 cex.names=1.5, las=1, ylim=c(0,20), col="black",
+                 density=rep(c(0,7),4))
+adderrorbars(x=c(1.5,2.5,4.5,5.5,7.5,8.5,10.5,11.5),y=embolism.m$plc.mean,SE=embolism.m$plc.se,
+             direction="updown",col="black",barlen=0.05,lwd=0.5)
+box(bty="l")
+text(x=c(2.2,5.2,8.2,11.2),y=-1,cex=1.5,
+     labels=c("Ambient-Control","Ambient-Heatwave","Warmed-Control","Warmed-Heatwave"),xpd=T,srt=45,pos=2)
+title(ylab=expression(atop(Percent~loss~of~branch~conductivity,
+                             ("%"))),cex.lab=1.8,xpd=NA) # y-axis label
+
+legend("topright", legend=c("Pre-heatwave","Post-heatwave"), ncol=1, fill="black", bty="n",
+       cex=1.3, seg.len = 6, angle=45, density=c(0,15))
+
+library(nlme)
+lme1 <- lme(plc~T_treatment*HW_treatment*phase,random=list(~1|chamber),data=embolism)
+anova(lme1)
+#----------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------
