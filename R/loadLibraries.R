@@ -27,6 +27,11 @@ Library(calibrate)
 Library(plantecophys)
 Library(oce)
 Library(RColorBrewer)
+Library(scales)
+Library(colorRamps)
+Library(RODBC)
+Library(lubridate)
+Library(dplyr)
 
 #- standard error of the mean
 se <- function(dat,na.rm=F,...){
