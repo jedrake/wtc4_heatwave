@@ -192,8 +192,8 @@ VPDs <- predict(lm.vpd,newdata=data.frame(Tair_al=Tvals))
 predicts <- Photosyn(VPD=VPDs,Tleaf=Tvals)
 #----
 
-windows(90,80)
-par(mfrow=c(3,2),mar=c(2,6,1,4),oma=c(4,0,4,0),cex.lab=1.5,cex.axis=1.2,las=1)
+windows(120,80)
+par(mfrow=c(3,3),mar=c(2,6,1,4),oma=c(4,0,4,0),cex.lab=1.5,cex.axis=1.2,las=1)
 
 #- photo vs. Tair
 plotBy(Photo~Tair_al|combotrt,data=wtc.m.highpar,legend=F,pch=16,
@@ -207,6 +207,13 @@ plotBy(Photo~VPD|combotrt,data=wtc.m.highpar,legend=F,pch=16,
        ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)));abline(h=0);axis(4)
 legend("topright",legend=letters[4],cex=2,bty="n")
 
+#---
+#- Plot model predictions
+plot(ALEAF~VPD,data=predicts,legend=F,pch=16,type="o",lwd=2,
+     ylab=expression(Modeled~A[leaf]));abline(h=0);axis(4)
+legend("topright",legend=letters[7],cex=2,bty="n")
+title(main="Modeled")
+
 #Trans vs. Tair
 plotBy(Trans~Tair_al|combotrt,data=wtc.m.highpar,legend=F,pch=16,
        ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)));axis(4)
@@ -216,6 +223,11 @@ legend("topright",legend=letters[2],cex=2,bty="n")
 plotBy(Trans~VPD|combotrt,data=wtc.m.highpar,legend=F,pch=16,
        ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)));axis(4)
 legend("topright",legend=letters[5],cex=2,bty="n")
+
+#- Plot model predictions
+plot(ELEAF~VPD,data=predicts,legend=F,pch=16,type="o",lwd=2,
+     ylab=expression(Modeled~E[leaf]));abline(h=0);axis(4)
+legend("topright",legend=letters[8],cex=2,bty="n")
 
 #- wuei vs. Tair
 plotBy(WUEi~Tair_al|combotrt,data=wtc.m.highpar,legend=F,pch=16,
@@ -228,8 +240,15 @@ plotBy(WUEi~VPD|combotrt,data=wtc.m.highpar,legend=F,pch=16,
 legend("topright",legend=letters[6],cex=2,bty="n")
 
 
-title(xlab=expression(T[air]~(degree*C)),outer=T,line=2,cex.lab=2,adj=0.25)
-title(xlab=expression(VPD~(kPa)),outer=T,line=2,cex.lab=2,adj=0.8)
+#- Plot model predictions
+plot(ALEAF/ELEAF~VPD,data=predicts,legend=F,pch=16,type="o",lwd=2,ylim=c(0,20),
+     ylab=expression(Modeled~A[leaf]~"/"~E[leaf]));abline(h=0);axis(4)
+legend("topright",legend=letters[9],cex=2,bty="n")
+
+
+title(xlab=expression(T[air]~(degree*C)),outer=T,line=2,cex.lab=2,adj=0.15)
+title(xlab=expression(VPD~(kPa)),outer=T,line=2,cex.lab=2,adj=0.5)
+title(xlab=expression(VPD~(kPa)),outer=T,line=2,cex.lab=2,adj=0.87)
 
 
 #-----------------------------------------------------------------------------------------------------------
