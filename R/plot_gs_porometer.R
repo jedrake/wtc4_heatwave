@@ -10,10 +10,12 @@ lm1 <- lm(poro~T_treatment*HW_treatment,data=pordat1)
 anova(lm1)
 
 
+
 #- plot
+palette(c("blue","darkgrey","orange","red"))
 windows()
 par(cex.axis=1.2,cex.lab=1.5,mar=c(12,8,1,1))
-boxplot(poro~combotrt,data=pordat1,ylab="",las=2,ylim=c(0,500),
+boxplot(poro~combotrt,data=pordat1,ylab="",las=2,ylim=c(0,500),col=palette()[1:4],
         names=rep("",4))
 
 text(x=1:4+0.1,y=-50,labels=c("Ambient-Control","Ambient-Heatwave","Warmed-Control","Warmed-Heatwave"),xpd=T,srt=45,
