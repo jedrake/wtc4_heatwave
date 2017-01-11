@@ -138,6 +138,23 @@ dat.hw.day <- summaryBy(TargTempC_Avg+Tair_al~chamber+HWtrt+Date,data=dat.hw,FUN
 #- calculate mean maximums for each treatment
 summaryBy(TargTempC_Avg+Tair_al~HWtrt,data=dat.hw.day,FUN=mean)
 
+#- histogram of temperatures during the heatwave
+hw_Temps <- c(subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 1000)$LeafT_Avg.1.,subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 1000)$LeafT_Avg.2.)
+amb_Temps <- c(subset(dat.hw,HWtrt=="C" & PPFD_Avg > 1000)$LeafT_Avg.1.,subset(dat.hw,HWtrt=="C" & PPFD_Avg > 1000)$LeafT_Avg.2.)
+
+
+windows(30,50)
+par(mfrow=c(2,1),mar=c(3,0,0,0),oma=c(2,6,1,1),las=1)
+hist(amb_Temps,xlim=c(10,55),main="",freq=F,xlab=expression(T[leaf]~(degree*C)),xaxs="i",yaxs="i");box()
+legend("top","Control",bty="n")
+abline(v=48.5,lty=2)
+hist(hw_Temps,xlim=c(10,55),main="",freq=F,xlab=expression(T[leaf]~(degree*C)),xaxs="i",yaxs="i");box()
+abline(v=51.5,lty=2)
+legend("top","Heatwave",bty="n")
+
+title(xlab=expression(T[leaf]~(degree*C)),outer=T,cex.lab=1.5,line=0.5)
+title(ylab=expression(Density~(leaf~thermocouple~measurements)),outer=T,cex.lab=1.5)
+
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 
@@ -321,13 +338,16 @@ legend("topleft",legend=letters[1],cex=1.4,bty="n")
 
 #---
 #-- plot T50 vs. the mean leaf T of the preceding day
-plotBy(T50_mean~TargTempC_Avg.mean|combotrt,data=thermo,type="p",pch=16,ylim=c(47,52),cex=1.5,legend=F,
+plotBy(T50_mean~TargTempC_Avg.max|combotrt,data=thermo,type="p",pch=16,ylim=c(47,52),cex=1.5,legend=F,
        ylab=expression(Leaf~thermotolerance~(T[50]*";"~degree*C)),
-       xlab=expression(Mean~T[leaf]~of~preceding~day~(degree*C)))
-lm2 <- lm(T50_mean~TargTempC_Avg.mean,data=thermo)
+       xlab=expression(Max~T[leaf]~of~preceding~day~(degree*C)))
+lm2 <- lm(T50_mean~TargTempC_Avg.max,data=thermo)
 abline(lm2)
 legend("topleft",legend=letters[2],cex=1.4,bty="n")
 
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
+
+
+
 
