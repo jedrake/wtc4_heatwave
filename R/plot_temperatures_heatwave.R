@@ -83,7 +83,13 @@ dat.raw2$Tleafmean <- rowMeans(dat.raw2[,c("Tleaf","TargTempC_Avg")])
 
 dat <- subset(dat.raw2,as.Date(DateTime_hr)>=as.Date("2016-10-29") & as.Date(DateTime_hr)<=as.Date("2016-11-10"))
 
-#- average across treatments
+#- Tleaf vs. Tair
+dat$Tdiff_IR <- with(dat,TargTempC_Avg-Tair_al)
+dat$Tdiff_TC <- with(dat,Tleaf-Tair_al)
+
+#- average across treatments for hourly averages
+dat.m$DateTime_hr <- nearestTimeStep(dat.m$DateTime_hr, nminutes = 60, align = "floor")
+
 dat.m <- summaryBy(.~DateTime_hr+T_treatment+HWtrt,data=dat,FUN=c(mean,se),keep.names=T)
 dat.m$combotrt <- factor(paste(dat.m$T_treatment,dat.m$HWtrt,sep="_"))
 
@@ -105,18 +111,25 @@ dat.m$combotrt <- factor(paste(dat.m$T_treatment,dat.m$HWtrt,sep="_"))
 #-----------------------------------------------------------------------------------------------------------
 #- plot IR leaf temperatures relative to air temperature
 
-
+#- plot daytime Tleaf
 windows(60,60)
 par(mfrow=c(1,1),mar=c(6,6,1,1),oma=c(0,0,1,0),cex.lab=1.6)
+xlims=c(10,50)
 
-plotBy(TargTempC_Avg~Tair_al|combotrt,data=subset(dat,PPFD_Avg>500),legend=F,las=1,
+plotBy(TargTempC_Avg~Tair_al|combotrt,data=subset(dat,PPFD_Avg>=500),legend=F,las=1,xlim=xlims,ylim=xlims,pch=16,
        xlab=expression(T[air]~(degree*C)),
-       ylab=expression(Infrared~T[leaf]~(degree*C)))
-legend("topleft",xpd=NA,pch=16,col=palette()[1:4],ncol=1,cex=1.5,bty="n",
+       ylab=expression(T[leaf]~(degree*C)))
+plotBy(Tleaf~Tair_al|combotrt,data=subset(dat,PPFD_Avg>=500),add=T,legend=F,pch=3)
+legend("topleft",xpd=NA,fill=palette()[1:4],ncol=1,cex=1.5,bty="n",
        legend=c("Ambient-Control","Ambient-Heatwave","Warmed-Control","Warmed-Heatwave"))
 abline(0,1,lty=3,lwd=3)
-lm1 <- lm(TargTempC_Avg~Tair_al,data=subset(dat,PPFD_Avg>500))
-abline(lm1,lwd=3)
+lm1 <- lm(TargTempC_Avg~Tair_al+I(Tair_al^2),data=subset(dat.hw,PPFD_Avg>=500))
+legend("topright",legend=letters[1],cex=1.4,bty="n")
+
+predictions <- predict.lm(lm1,newdata=data.frame(Tair_al = seq(11,45,length.out=101)),interval="prediction")
+lines(predictions[,1]~seq(11,45,length.out=101),col="black",lwd=3)
+#lines(predictions[,2]~seq(11,45,length.out=101),col="black",lwd=1,lty=2)
+#lines(predictions[,3]~seq(11,45,length.out=101),col="black",lwd=1,lty=2)
 
 legend("bottomright",lty=c(3,1),lwd=c(3,3),legend=c("1:1","Fit"),bty="n",cex=1.5)
 #-----------------------------------------------------------------------------------------------------------
@@ -138,22 +151,36 @@ dat.hw.day <- summaryBy(TargTempC_Avg+Tair_al~chamber+HWtrt+Date,data=dat.hw,FUN
 #- calculate mean maximums for each treatment
 summaryBy(TargTempC_Avg+Tair_al~HWtrt,data=dat.hw.day,FUN=mean)
 
-#- histogram of temperatures during the heatwave
-hw_Temps <- c(subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 1000)$LeafT_Avg.1.,subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 1000)$LeafT_Avg.2.)
-amb_Temps <- c(subset(dat.hw,HWtrt=="C" & PPFD_Avg > 1000)$LeafT_Avg.1.,subset(dat.hw,HWtrt=="C" & PPFD_Avg > 1000)$LeafT_Avg.2.)
+#- histogram of temperatures during the heatwave (thermocouples)
+#hw_Temps <- c(subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 1000)$LeafT_Avg.1.,subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 1000)$LeafT_Avg.2.)
+#amb_Temps <- c(subset(dat.hw,HWtrt=="C" & PPFD_Avg > 1000)$LeafT_Avg.1.,subset(dat.hw,HWtrt=="C" & PPFD_Avg > 1000)$LeafT_Avg.2.)
+
+#- histogram of temperatures during the heatwave (IR)
+#hw_Temps <- subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 1000)$TargTempC_Avg
+#amb_Temps <- subset(dat.hw,HWtrt=="C" & PPFD_Avg > 1000)$TargTempC_Avg
+
+#- histogram of temperatures during the heatwave (both IR and TC)
+hw_Temps <- c(subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 500)$TargTempC_Avg,subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 500)$LeafT_Avg.1.,subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 500)$LeafT_Avg.2.)
+amb_Temps <- c(subset(dat.hw,HWtrt=="C" & PPFD_Avg > 500)$TargTempC_Avg,subset(dat.hw,HWtrt=="C" & PPFD_Avg > 500)$LeafT_Avg.1.,subset(dat.hw,HWtrt=="C" & PPFD_Avg > 500)$LeafT_Avg.2.)
 
 
 windows(30,50)
-par(mfrow=c(2,1),mar=c(3,0,0,0),oma=c(2,6,1,1),las=1)
-hist(amb_Temps,xlim=c(10,55),main="",freq=F,xlab=expression(T[leaf]~(degree*C)),xaxs="i",yaxs="i");box()
+par(mfrow=c(2,1),mar=c(3,0,0,0),oma=c(2,1,1,6),las=1)
+ylims=c(0,0.15)
+hist(amb_Temps,xlim=c(10,55),main="",freq=F,xlab=expression(T[leaf]~(degree*C)),yaxt="n",xaxs="i", yaxs="i",ylim=ylims);box()
 legend("top","Control",bty="n")
+axis(4)
+legend("topright",legend=letters[2],cex=1.4,bty="n")
+
 abline(v=48.5,lty=2)
-hist(hw_Temps,xlim=c(10,55),main="",freq=F,xlab=expression(T[leaf]~(degree*C)),xaxs="i",yaxs="i");box()
+hist(hw_Temps,xlim=c(10,55),main="",freq=F,xlab=expression(T[leaf]~(degree*C)),yaxt="n",xaxs="i",yaxs="i",ylim=ylims);box()
 abline(v=51.5,lty=2)
 legend("top","Heatwave",bty="n")
+axis(4)
+legend("topright",legend=letters[3],cex=1.4,bty="n")
 
 title(xlab=expression(T[leaf]~(degree*C)),outer=T,cex.lab=1.5,line=0.5)
-title(ylab=expression(Density~(leaf~thermocouple~measurements)),outer=T,cex.lab=1.5)
+title(ylab=expression(Density~of~T[leaf]),outer=T,cex.lab=1.5,line=-21)
 
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
@@ -224,19 +251,20 @@ wtc.m$combotrt <- factor(paste(wtc.m$T_treatment,wtc.m$HWtrt,sep="_"))
 wtc.trt <- summaryBy(PAR+VPD+Tair_al~DateTime_hr+combotrt,data=wtc.m,
                      FUN=c(mean,se),na.rm=T)
 
+#-
 
 #----
 #- plot PAR, VPD, and temperatures
-windows(70,60)
-par(mfrow=c(5,1),mar=c(0,6,0,6),oma=c(7,0,3,0),cex.lab=1.6,xpd=F,las=1)
+windows(70,80)
+par(mfrow=c(7,1),mar=c(0,6,0,6),oma=c(7,0,3,0),cex.lab=1.6,xpd=F,las=1)
 palette(c("blue","black","orange","red"))
 
 #- plot PAR
 plotBy(PAR.mean~DateTime_hr,data=subset(wtc.trt,combotrt=="ambient_C"),legend=F,col="darkgrey",type="l",lwd=2,
        ylim=c(0,2000),ylab="PPFD",xaxt="n");axis(side=4)
 axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime_hr,tz="GMT"))),las=3,cex.axis=1.5,labels=F)
-legend(x=subset(wtc.trt,combotrt=="ambient_C")$DateTime_hr[1]-120000,
-       y=2600,xpd=NA,lwd=3,col=palette()[1:4],ncol=4,cex=1.5,bty="n",
+legend(x=subset(wtc.trt,combotrt=="ambient_C")$DateTime_hr[1]-200000,
+       y=2700,xpd=NA,lwd=3,col=palette()[1:4],ncol=4,cex=1.2,bty="n",
        legend=c("Ambient-Control","Ambient-Heatwave","Warmed-Control","Warmed-Heatwave"))
 legend("topright",legend=letters[1],cex=1.4,bty="n")
 
@@ -257,18 +285,34 @@ legend("topright",legend=letters[3],cex=1.4,bty="n")
 
 #- plot Tleaf (IR)
 plotBy(TargTempC_Avg.mean~DateTime_hr|combotrt,data=dat.m,legend=F,col=palette()[1:4],type="l",lwd=2,ylim=c(5,50),
-       ylab=expression(T[leaf-IR]),xaxt="n");axis(side=4)
+       ylab=expression(T[l-IR]),xaxt="n");axis(side=4)
 adderrorbars(x=dat.m$DateTime_hr,y=dat.m$TargTempC_Avg.mean,SE=dat.m$TargTempC_Avg.se,direction="updown",col=dat.m$combotrt,barlen=0)
 axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime_hr,tz="GMT"))),las=3,cex.axis=1.5,labels=F)
 legend("topright",legend=letters[4],cex=1.4,bty="n")
 
 #- plot Tleaf (TC)
 plotBy(Tleaf.mean~DateTime_hr|combotrt,data=dat.m,legend=F,col=palette()[1:4],type="l",lwd=2,ylim=c(5,50),
-       ylab=expression(T[leaf-TC]),xaxt="n");axis(side=4)
+       ylab=expression(T[l-TC]),xaxt="n");axis(side=4)
 
 adderrorbars(x=dat.m$DateTime_hr,y=dat.m$Tleaf.mean,SE=dat.m$Tleaf.se,direction="updown",col=dat.m$combotrt,barlen=0)
-axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime_hr,tz="GMT"))),las=3,cex.axis=1.5)
+axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime_hr,tz="GMT"))),las=3,cex.axis=1.5,labels=F)
 legend("topright",legend=letters[5],cex=1.4,bty="n")
+
+#- plot Tleaf diferrence (IR)
+plotBy(Tdiff_IR.mean~DateTime_hr|combotrt,data=dat.m,legend=F,col=palette()[1:4],type="l",lwd=2,ylim=c(-2,7),
+       ylab=expression(T[l-IR]-T[air]),xaxt="n");axis(side=4);abline(h=0)
+
+adderrorbars(x=dat.m$DateTime_hr,y=dat.m$Tdiff_IR.mean,SE=dat.m$Tdiff_IR.se,direction="updown",col=dat.m$combotrt,barlen=0)
+axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime_hr,tz="GMT"))),las=3,cex.axis=1.5,labels=F)
+legend("topright",legend=letters[6],cex=1.4,bty="n")
+
+#- plot Tleaf diferrence (TC)
+plotBy(Tdiff_TC.mean~DateTime_hr|combotrt,data=dat.m,legend=F,col=palette()[1:4],type="l",lwd=2,ylim=c(-2,7),
+       ylab=expression(T[l-TC]-T[air]),xaxt="n");axis(side=4);abline(h=0)
+
+adderrorbars(x=dat.m$DateTime_hr,y=dat.m$Tdiff_TC.mean,SE=dat.m$Tdiff_TC.se,direction="updown",col=dat.m$combotrt,barlen=0)
+axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime_hr,tz="GMT"))),las=3,cex.axis=1.5,labels=T)
+legend("topright",legend=letters[7],cex=1.4,bty="n")
 
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
@@ -347,6 +391,9 @@ legend("topleft",legend=letters[2],cex=1.4,bty="n")
 
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
+
+
+
 
 
 
