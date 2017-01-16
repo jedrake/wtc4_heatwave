@@ -82,6 +82,11 @@ dat.raw$Tleaf <- rowMeans(dat.raw[,c("LeafT_Avg.1.","LeafT_Avg.2.")],na.rm=T)
 
 
 
+
+
+
+
+
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 #- read in the leaf light dataset
@@ -187,6 +192,8 @@ axis.POSIXct(side=1,x=subset(dat.ll.sub,chamber=="C10")$DateTime,format="%H:%M")
 
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
+#- comparison plots of IR and TC data
+
 
 #- subset to just the two "campaigns". The first campaign started on 28 June 2016. The second campaign started on 20 Sept.
 #  both campaigns lasted for a week
@@ -236,20 +243,68 @@ lims <- c(0,40)
 #- plot leaf temperatures relative to air temperature
 plot(TargTempC_Avg~Tair_al,data=Tdat_hr,ylim=lims,xlim=lims,pch=3,
      xlab=expression(T[air]~(degree*C)),
-     ylab=expression(T[l-IR]));abline(0,1)
+     ylab=expression(T[l-IR]));abline(0,1,col="grey",lty=2)
+lm1 <- lm(TargTempC_Avg~Tair_al,data=Tdat_hr)
+lines(predict.lm(lm1,newdat=data.frame(Tair_al=seq(0,35,length.out=101))) ~ seq(0,35,length.out=101),lwd=3,col="grey")
+legend("topleft",legend=letters[1],cex=1.4,bty="n")
+
 plot(LeafT_Avg.1.~Tair_al,data=Tdat_hr,ylim=lims,xlim=lims,pch=3,
      xlab=expression(T[air]~(degree*C)),
-     ylab=expression(T[l-TC]));abline(0,1)
+     ylab=expression(T[l-TC]));abline(0,1,col="grey",lty=2)
 points(LeafT_Avg.2.~Tair_al,data=Tdat_hr,pch=3)
+lm2 <- lm(Tleaf~Tair_al,data=Tdat_hr)
+lines(predict.lm(lm2,newdat=data.frame(Tair_al=seq(0,35,length.out=101))) ~ seq(0,35,length.out=101),lwd=3,col="grey")
+legend("topleft",legend=letters[2],cex=1.4,bty="n")
+
 
 #- plot covariance between temperature measurements
 plot(Tleaf~TargTempC_Avg,data=Tdat_hr,ylim=lims,xlim=lims,pch=3,
      xlab=expression(T[l-IR]~(degree*C)),
-     ylab=expression(T[l-TC]));abline(0,1)
+     ylab=expression(T[l-TC]));abline(0,1,col="grey",lty=2)
+lm3 <- lm(Tleaf~TargTempC_Avg,data=Tdat_hr)
+lines(predict.lm(lm3,newdat=data.frame(TargTempC_Avg=seq(0,35,length.out=101))) ~ seq(0,35,length.out=101),lwd=3,col="grey")
+confint(lm3)
+legend("topleft",legend=letters[3],cex=1.4,bty="n")
 
 #- plot the excursion between Tleaf and Tair as a function of PPFD
 plot(Tdiff_IR~PAR,data=subset(Tdat_hr,PAR>4),ylim=c(-5,10),xlim=c(0,2000),pch=3,col="black",
      xlab=expression(PPFD~(mu*mol~m^-2~s^-1)),
      ylab=expression(T[air]-T[leaf]~(degree*C)));abline(h=0)
 points(Tdiff_TC~PAR,data=Tdat_hr,pch=3,col="blue")
-legend("bottomright",fill=c("black","blue"),legend=c("IR","TC"))
+legend("bottomright",fill=c("black","blue","red"),legend=c("Infrared","Thermocouple","Thermal images"))
+lm4 <- lm(Tdiff_TC~PAR,data=Tdat_hr)
+predicts.Tdiff <- predict.lm(lm4,newdat=data.frame(PAR=seq(0,1600,length.out=101)),interval="prediction")
+lines(predicts.Tdiff[,1]~ seq(0,1600,length.out=101),lwd=3,col="grey")
+lines(predicts.Tdiff[,2]~ seq(0,1600,length.out=101),lwd=2,lty=2,col="grey")
+lines(predicts.Tdiff[,3]~ seq(0,1600,length.out=101),lwd=2,lty=2,col="grey")
+legend("topleft",legend=letters[4],cex=1.4,bty="n")
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+#- compare thermal camera data to others, add Tdiff to plot
+
+
+#- get the thermal camera data
+TCdat1 <- read.csv("Data/WTC4_TLEAF_THERMALCAM_20160629.csv")
+TCdat2 <- read.csv("Data/WTC4_TLEAF_THERMALCAM_20160921.csv")
+TCdat <- rbind(TCdat1,TCdat2[,1:6])
+TCdat$Date <- as.Date(TCdat$Date)
+names(TCdat)[5] <- "Tleaf_Thermo"
+TCdat$DateTime <- as.POSIXct(paste(TCdat$Date,TCdat$Time,sep=" "),format="%F %R",tz="GMT")
+TCdat$DateTime_hr <- nearestTimeStep(TCdat$DateTime, nminutes = 15, align = "floor")
+
+#- merge thermal camera data in with IR and TC data. Note that IR and TC data will be duplicated.
+TCdat.all <- merge(TCdat,Tdat,by=c("chamber","DateTime_hr"))
+TCdat.all$Tdiff_Thermo <- with(TCdat.all,Tleaf_Thermo-Tair_al)
+
+points(Tdiff_Thermo~PAR,data=TCdat.all,pch=16,col="red")
+
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
