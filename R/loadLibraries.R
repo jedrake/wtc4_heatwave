@@ -32,6 +32,9 @@ Library(colorRamps)
 Library(RODBC)
 Library(lubridate)
 Library(dplyr)
+Library(car)
+Library(nlme)
+Library(phia)
 
 #- standard error of the mean
 se <- function(dat,na.rm=F,...){

@@ -458,15 +458,40 @@ text(x=thermo.m2$Date[1]+23,y=52,"Post-heatwave",cex=1.2)
 
 #---
 #-- plot T50 vs. the mean leaf T of the preceding day
-plotBy(T50_mean~TargTempC_Avg.max|HW_treatment,data=thermo,type="p",pch=16,ylim=c(47,52),cex=1.5,legend=F,
+plotBy(T50_mean~TargTempC_Avg.mean|HW_treatment,data=thermo,type="p",pch=16,ylim=c(47,52),cex=1.5,legend=F,
        ylab=expression(Leaf~thermotolerance~(T[50]*";"~degree*C)),
-       xlab=expression(Max~T[leaf]~of~preceding~day~(degree*C)))
-lm2 <- lm(T50_mean~TargTempC_Avg.max,data=thermo)
+       xlab=expression(Mean~T[leaf]~of~preceding~day~(degree*C)))
+lm2 <- lm(T50_mean~TargTempC_Avg.mean,data=thermo)
 abline(lm2)
 legend("bottomright",legend=letters[2],cex=1.4,bty="n")
 
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+# statistical analysis of T50
+head(thermo)
+thermo$DateFac<- as.factor(thermo$Date)
+
+#- fit model 
+F1 <- lme(T50_mean~T_treatment*HW_treatment*DateFac,random=list(~1|chamber),
+          data=thermo,method="REML")
+
+#look at model diagnostics
+plot(F1,resid(.,type="p")~fitted(.) | T_treatment,abline=0)   #resid vs. fitted for each treatment
+plot(F1,T50_mean~fitted(.)|chamber,abline=c(0,1))           #predicted vs. fitted for each chamber
+plot(F1,T50_mean~fitted(.),abline=c(0,1))                   #predicted vs. fitted
+qqnorm(F1, ~ resid(., type = "p"), abline = c(0, 1))          #qqplot. 
+hist(F1 $residuals[,1])
+anova(F1,type="marginal")
+Anova(F1, type=3) #not sure what the difference between these two tests are but they give slightly different P-values
+
+#post-hoc test
+testInteractions(F1, fixed=c("DateFac"), across=c("HW_treatment")) #simple effect of HW at each date
+interactionMeans(F1, factors=c("HW_treatment","DateFac"))
+
 
 
 
