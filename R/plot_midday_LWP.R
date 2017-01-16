@@ -53,7 +53,8 @@ windows(35,15)
 par(mfrow=c(1,2),mar=c(6,7,2,1),cex.axis=1.5)
 symbols <- c(1,16)
 ptsize <- 2
-
+palette(c("blue","black","orange","red")
+        
 #----
 #-- plot the ambient treatment
 plot(LWP.mean~Date,data=subset(lwp.m.amb,HW_treatment=="control"),ylim=c(-3,0),type="o",las=1,
@@ -66,9 +67,9 @@ rect(xleft=dates[1],ybottom=-4,xright=dates[2],ytop=1,col="darkgrey",density=10)
 #- plot the midday leaf water potentials
 adderrorbars(x=lwp.m.amb$Date,y=lwp.m.amb$LWP.mean,SE=lwp.m.amb$LWP.se,direction="updown")
 points(LWP.mean~Date,data=subset(lwp.m.amb,HW_treatment=="control"),ylim=c(-3,0),type="o",
-     pch=21,bg="white",cex=ptsize)
+     pch=21,bg="blue",cex=ptsize)
 points(LWP.mean~Date,data=subset(lwp.m.amb,HW_treatment=="heatwave"),ylim=c(-3,0),type="o",
-     pch=21,bg="darkgrey",cex=ptsize)
+     pch=21,bg="black",cex=ptsize)
 
 #- add a line for the turgor loss point
 abline(h=tlp.m$TLP.mean[1],lwd=2,lty=2)
@@ -77,14 +78,14 @@ textxy(X=as.Date("2016-10-27"),Y=tlp.m$TLP.mean[1],lab="Turgor loss point",offse
 #- label axes and add a legend
 title(main=expression(Ambient~temperature),cex.main=1.5)
 title(ylab=expression(Psi[L-MD]~(MPa)),cex.lab=2)
-legend("bottomleft",legend=c("Control","Heatwave"),pch=21,col="black",pt.bg=c("white","darkgrey"),pt.cex=ptsize)
+legend("bottomleft",legend=c("Control","Heatwave"),pch=21,col="black",pt.bg=c("blue","black"),pt.cex=ptsize)
 box()
 legend("topright",legend=letters[1],cex=2,bty="n")
 
 
 #- add an inset bar chart for Kleaf
 plotInset(17095,-1.1,17101,0.15,
-          expr={barplot(Kleaf.m$Kleaf.mean[1:2],ylim=c(0,30),col=c("white","darkgrey"),space=0,las=2,cex.axis=1)
+          expr={barplot(Kleaf.m$Kleaf.mean[1:2],ylim=c(0,30),col=c("blue","black"),space=0,las=2,cex.axis=1)
             adderrorbars(x=c(0.5,1.5),y=Kleaf.m$Kleaf.mean[1:2],SE=Kleaf.m$Kleaf.se[1:2],direction="updown")
             text(x=c(0.7,1.7),y=-4,labels=c("Control","Heatwave"),xpd=T,srt=45,pos=2)
             title(ylab=expression(K[leaf]))
@@ -103,9 +104,9 @@ rect(xleft=dates[1],ybottom=-4,xright=dates[2],ytop=1,col="darkgrey",density=10)
 #- plot the midday leaf water potentials
 adderrorbars(x=lwp.m.ele$Date,y=lwp.m.ele$LWP.mean,SE=lwp.m.ele$LWP.se,direction="updown")
 points(LWP.mean~Date,data=subset(lwp.m.ele,HW_treatment=="control"),ylim=c(-3,0),type="o",
-       pch=21,bg="white",cex=ptsize)
+       pch=21,bg="orange",cex=ptsize)
 points(LWP.mean~Date,data=subset(lwp.m.ele,HW_treatment=="heatwave"),ylim=c(-3,0),type="o",
-       pch=21,bg="darkgrey",cex=ptsize)
+       pch=21,bg="red",cex=ptsize)
 
 #- add a line for the turgor loss point
 abline(h=tlp.m$TLP.mean[2],lwd=2,lty=2)
@@ -114,14 +115,14 @@ textxy(X=as.Date("2016-10-27"),Y=tlp.m$TLP.mean[2],lab="Turgor loss point",offse
 #- label axes and add a legend
 title(main=expression(Warmed~temperature~(+3*degree*C)),cex.main=1.5)
 title(ylab=expression(Psi[L-MD]~(MPa)),cex.lab=2)
-legend("bottomleft",legend=c("Control","Heatwave"),pch=21,col="black",pt.bg=c("white","darkgrey"),pt.cex=ptsize)
+legend("bottomleft",legend=c("Control","Heatwave"),pch=21,col="black",pt.bg=c("orange","red"),pt.cex=ptsize)
 box()
 legend("topright",legend=letters[2],cex=2,bty="n")
 
 
 #- add an inset bar chart for Kleaf
 plotInset(17095,-1.1,17101,0.15,
-          expr={barplot(Kleaf.m$Kleaf.mean[3:4],ylim=c(0,30),col=c("white","darkgrey"),space=0,las=2,cex.axis=1)
+          expr={barplot(Kleaf.m$Kleaf.mean[3:4],ylim=c(0,30),col=c("orange","red"),space=0,las=2,cex.axis=1)
             adderrorbars(x=c(0.5,1.5),y=Kleaf.m$Kleaf.mean[3:4],SE=Kleaf.m$Kleaf.se[3:4],direction="updown")
             text(x=c(0.7,1.7),y=-4,labels=c("Control","Heatwave"),xpd=T,srt=45,pos=2)
             title(ylab=expression(K[leaf]))
