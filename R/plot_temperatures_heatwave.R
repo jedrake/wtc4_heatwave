@@ -93,6 +93,9 @@ dat.m$DateTime_hr <- nearestTimeStep(dat.m$DateTime_hr, nminutes = 60, align = "
 dat.m <- summaryBy(.~DateTime_hr+T_treatment+HWtrt,data=dat,FUN=c(mean,se),keep.names=T)
 dat.m$combotrt <- factor(paste(dat.m$T_treatment,dat.m$HWtrt,sep="_"))
 
+#- just the heatwave data
+dat.hw <- subset(dat,as.Date(DateTime_hr)>=as.Date("2016-10-31") & as.Date(DateTime_hr)<=as.Date("2016-11-3"))
+dat.hw$Date <- as.Date(dat.hw$DateTime_hr)
 #-----------------------------------------------------------------------------------------------------------
 
 
@@ -109,19 +112,48 @@ dat.m$combotrt <- factor(paste(dat.m$T_treatment,dat.m$HWtrt,sep="_"))
 
 
 #-----------------------------------------------------------------------------------------------------------
-#- plot IR leaf temperatures relative to air temperature
+#- plot IR leaf temperatures relative to air temperature. 
 
 #- plot daytime Tleaf
 windows(60,60)
 par(mfrow=c(1,1),mar=c(6,6,1,1),oma=c(0,0,1,0),cex.lab=1.6)
 xlims=c(10,50)
-
-plotBy(TargTempC_Avg~Tair_al|combotrt,data=subset(dat,PPFD_Avg>=500),legend=F,las=1,xlim=xlims,ylim=xlims,pch=16,
+palette(c("blue","black","orange","red"))
+plotBy(TargTempC_Avg~Tair_al|combotrt,data=subset(dat.hw,PPFD_Avg>=500),legend=F,las=1,xlim=xlims,ylim=xlims,pch=16,
        xlab=expression(T[air]~(degree*C)),
        ylab=expression(T[leaf]~(degree*C)))
-plotBy(Tleaf~Tair_al|combotrt,data=subset(dat,PPFD_Avg>=500),add=T,legend=F,pch=3)
+plotBy(Tleaf~Tair_al|combotrt,data=subset(dat.hw,PPFD_Avg>=500),add=T,legend=F,pch=3)
 legend("topleft",xpd=NA,fill=palette()[1:4],ncol=1,cex=1.5,bty="n",
        legend=c("Ambient-Control","Ambient-Heatwave","Warmed-Control","Warmed-Heatwave"))
+abline(0,1,lty=3,lwd=3)
+lm1 <- lm(TargTempC_Avg~Tair_al+I(Tair_al^2),data=subset(dat.hw,PPFD_Avg>=500))
+legend("topright",legend=letters[1],cex=1.4,bty="n")
+
+predictions <- predict.lm(lm1,newdata=data.frame(Tair_al = seq(11,45,length.out=101)),interval="prediction")
+lines(predictions[,1]~seq(11,45,length.out=101),col="black",lwd=3)
+#lines(predictions[,2]~seq(11,45,length.out=101),col="black",lwd=1,lty=2)
+#lines(predictions[,3]~seq(11,45,length.out=101),col="black",lwd=1,lty=2)
+
+legend("bottomright",lty=c(3,1),lwd=c(3,3),legend=c("1:1","Fit"),bty="n",cex=1.5)
+#-----------------------------------------------------------------------------------------------------------
+
+
+
+
+#-----------------------------------------------------------------------------------------------------------
+#- plot IR leaf temperatures relative to air temperature. An alternative "two treatment" version
+
+#- plot daytime Tleaf
+windows(60,60)
+par(mfrow=c(1,1),mar=c(6,6,1,1),oma=c(0,0,1,0),cex.lab=1.6)
+xlims=c(10,50)
+palette(c("blue","red"))
+plotBy(TargTempC_Avg~Tair_al|HWtrt,data=subset(dat.hw,PPFD_Avg>=500),legend=F,las=1,xlim=xlims,ylim=xlims,pch=1,
+       xlab=expression(T[air]~(degree*C)),
+       ylab=expression(T[leaf]~(degree*C)))
+#plotBy(Tleaf~Tair_al|combotrt,data=subset(dat.hw,PPFD_Avg>=500),add=T,legend=F,pch=3)
+legend("topleft",xpd=NA,col=rep(palette()[1:2],1),ncol=1,cex=1.3,bty="n",pch=c(1,1,3,3),
+       legend=c("Control","Heatwave"))
 abline(0,1,lty=3,lwd=3)
 lm1 <- lm(TargTempC_Avg~Tair_al+I(Tair_al^2),data=subset(dat.hw,PPFD_Avg>=500))
 legend("topright",legend=letters[1],cex=1.4,bty="n")
@@ -142,8 +174,7 @@ legend("bottomright",lty=c(3,1),lwd=c(3,3),legend=c("1:1","Fit"),bty="n",cex=1.5
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 #- calculate daily maximum Tleaf (IR) and Tair during the heatwave
-dat.hw <- subset(dat,as.Date(DateTime_hr)>=as.Date("2016-10-31") & as.Date(DateTime_hr)<=as.Date("2016-11-3"))
-dat.hw$Date <- as.Date(dat.hw$DateTime_hr)
+
 
 #- calculate daily maximums
 dat.hw.day <- summaryBy(TargTempC_Avg+Tair_al~chamber+HWtrt+Date,data=dat.hw,FUN=max,keep.names=T)
@@ -156,12 +187,12 @@ summaryBy(TargTempC_Avg+Tair_al~HWtrt,data=dat.hw.day,FUN=mean)
 #amb_Temps <- c(subset(dat.hw,HWtrt=="C" & PPFD_Avg > 1000)$LeafT_Avg.1.,subset(dat.hw,HWtrt=="C" & PPFD_Avg > 1000)$LeafT_Avg.2.)
 
 #- histogram of temperatures during the heatwave (IR)
-#hw_Temps <- subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 1000)$TargTempC_Avg
-#amb_Temps <- subset(dat.hw,HWtrt=="C" & PPFD_Avg > 1000)$TargTempC_Avg
+hw_Temps <- subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 1000)$TargTempC_Avg
+amb_Temps <- subset(dat.hw,HWtrt=="C" & PPFD_Avg > 1000)$TargTempC_Avg
 
 #- histogram of temperatures during the heatwave (both IR and TC)
-hw_Temps <- c(subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 500)$TargTempC_Avg,subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 500)$LeafT_Avg.1.,subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 500)$LeafT_Avg.2.)
-amb_Temps <- c(subset(dat.hw,HWtrt=="C" & PPFD_Avg > 500)$TargTempC_Avg,subset(dat.hw,HWtrt=="C" & PPFD_Avg > 500)$LeafT_Avg.1.,subset(dat.hw,HWtrt=="C" & PPFD_Avg > 500)$LeafT_Avg.2.)
+#hw_Temps <- c(subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 500)$TargTempC_Avg,subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 500)$LeafT_Avg.1.,subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 500)$LeafT_Avg.2.)
+#amb_Temps <- c(subset(dat.hw,HWtrt=="C" & PPFD_Avg > 500)$TargTempC_Avg,subset(dat.hw,HWtrt=="C" & PPFD_Avg > 500)$LeafT_Avg.1.,subset(dat.hw,HWtrt=="C" & PPFD_Avg > 500)$LeafT_Avg.2.)
 
 
 windows(30,50)
@@ -382,16 +413,60 @@ legend("topleft",legend=letters[1],cex=1.4,bty="n")
 
 #---
 #-- plot T50 vs. the mean leaf T of the preceding day
-plotBy(T50_mean~TargTempC_Avg.max|combotrt,data=thermo,type="p",pch=16,ylim=c(47,52),cex=1.5,legend=F,
+plotBy(T50_mean~TargTempC_Avg.mean|combotrt,data=thermo,type="p",pch=16,ylim=c(47,52),cex=1.5,legend=F,
        ylab=expression(Leaf~thermotolerance~(T[50]*";"~degree*C)),
-       xlab=expression(Max~T[leaf]~of~preceding~day~(degree*C)))
-lm2 <- lm(T50_mean~TargTempC_Avg.max,data=thermo)
+       xlab=expression(Mean~T[leaf]~of~preceding~day~(degree*C)))
+lm2 <- lm(T50_mean~TargTempC_Avg.mean,data=thermo)
 abline(lm2)
 legend("topleft",legend=letters[2],cex=1.4,bty="n")
 
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 
+
+
+
+
+
+
+#--- Plot an alternative T50 figure showing only two treatments
+#- average across dates and treatments
+thermo.m2 <- summaryBy(T50_mean~Date+HW_treatment,data=thermo,FUN=c(mean,se))
+
+palette(c("black","red"))
+
+#-- plot T50 vs. time
+windows(100,60)
+par(mfrow=c(1,2),cex.lab=1.6,xpd=F,las=1,mar=c(5,7,3,1))
+plotBy(T50_mean.mean~Date|HW_treatment,data=thermo.m2,type="o",pch=16,ylim=c(47,52),cex=1.5,legend=F,
+       ylab=expression(Leaf~thermotolerance~(T[50]*";"~degree*C)))
+
+#- add shaded rectangle for heatwave
+dates <- as.Date(c("2016-10-31","2016-11-4"))
+rect(xleft=dates[1]+0.5,ybottom=40,xright=dates[2]+0.5,ytop=55,col="darkgrey",density=7) #add rectangles for droughts
+
+adderrorbars(x=thermo.m2$Date,y=thermo.m2$T50_mean.mean,SE=thermo.m2$T50_mean.se,
+             direction="updown",col=thermo.m2$HW_treatment,barlen=0.05)
+legend("bottomleft",xpd=NA,pch=16,col=palette()[1:2],ncol=1,cex=1.2,
+       legend=c("Control","Heatwave"))
+plotBy(T50_mean.mean~Date|HW_treatment,data=thermo.m2,type="o",pch=16,ylim=c(47,52),cex=1.5,legend=F,add=T,
+       ylab=expression(Leaf~thermotolerance~(T[50]*";"~degree*C)))
+legend("bottomright",legend=letters[1],cex=1.4,bty="n")
+text(x=thermo.m2$Date[1]+5,y=52,"Pre-heatwave",cex=1.2)
+text(x=thermo.m2$Date[1]+23,y=52,"Post-heatwave",cex=1.2)
+
+
+#---
+#-- plot T50 vs. the mean leaf T of the preceding day
+plotBy(T50_mean~TargTempC_Avg.max|HW_treatment,data=thermo,type="p",pch=16,ylim=c(47,52),cex=1.5,legend=F,
+       ylab=expression(Leaf~thermotolerance~(T[50]*";"~degree*C)),
+       xlab=expression(Max~T[leaf]~of~preceding~day~(degree*C)))
+lm2 <- lm(T50_mean~TargTempC_Avg.max,data=thermo)
+abline(lm2)
+legend("bottomright",legend=letters[2],cex=1.4,bty="n")
+
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
 
 
 
