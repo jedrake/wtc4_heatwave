@@ -25,20 +25,20 @@ figure_diamHeight_timeseries <- function(hddata,type="chamber"){
   #- plot diameter, then height
   
   #- plot diameter (65-cm) of control trees
-  with(subset(dfa,HWtrt=="C" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")), plot(Date, Diam_65cm.mean, pch=1, col=T_treatment,
+  with(subset(dfa,HWtrt=="C" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")), plot(Date-3, Diam_65cm.mean, pch=1, col=T_treatment,
                  ylab="Stem diameter (mm)",axes=F,xlim=c(as.Date("2016-9-1"),as.Date("2016-12-1")),
                  xlab="",
                  ylim=c(min(Diam_65cm.mean-Diam_65cm.se,na.rm=T),max(Diam_65cm.mean+Diam_65cm.se,na.rm=T)),
-                 panel.first=adderrorbars(Date, Diam_65cm.mean, 
+                 panel.first=adderrorbars(Date-3, Diam_65cm.mean, 
                                           Diam_65cm.se, direction="updown",
                                           col=T_treatment,barlen=0)
   ))
   
   #- plot diameter (65-cm) of heatwave trees
-  with(subset(dfa,HWtrt=="HW"& Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")), points(Date+3, Diam_65cm.mean, pch=16, col=T_treatment,
+  with(subset(dfa,HWtrt=="HW"& Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")), points(Date, Diam_65cm.mean, pch=16, col=T_treatment,
                                     ylab="Stem diameter (mm)",axes=F,
                                     ylim=c(min(Diam_65cm.mean-Diam_65cm.se,na.rm=T),max(Diam_65cm.mean+Diam_65cm.se,na.rm=T)),
-                                    panel.first=adderrorbars(Date+3, Diam_65cm.mean, 
+                                    panel.first=adderrorbars(Date, Diam_65cm.mean, 
                                                              Diam_65cm.se, direction="updown",
                                                              col=T_treatment,barlen=0)
   ))
@@ -55,21 +55,40 @@ figure_diamHeight_timeseries <- function(hddata,type="chamber"){
          pch=c(1,16,1,16), col=palette()[c(1,1,2,2)], bty='n',ncol=2,xpd=NA) 
   legend("bottomright",legend=letters[1],cex=1.4,bty="n")
   
+  #-- add linear models fit to the first four dates, extrapolated to the fifth
+  lm1 <- lm(Diam_65cm.mean~Date,
+            data=subset(dfa,HWtrt=="HW" & T_treatment=="control" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
+  lines(x=as.Date(c("2016-10-26","2016-11-09")),
+        y=predict(lm1,newdata=data.frame(Date=as.Date(c("2016-10-26","2016-11-09")))),
+        lty=2,col=palette()[1])
+  lines(x=as.Date(c("2016-09-14","2016-09-28","2016-10-12","2016-10-26")),
+        y=predict(lm1,newdata=data.frame(Date=as.Date(c("2016-09-14","2016-09-28","2016-10-12","2016-10-26")))),
+        lty=1,col=palette()[1],lwd=1.2)
+  lm2 <- lm(Diam_65cm.mean~Date,
+            data=subset(dfa,HWtrt=="HW" & T_treatment=="warmed" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
+  lines(x=as.Date(c("2016-10-26","2016-11-09")),
+        y=predict(lm2,newdata=data.frame(Date=as.Date(c("2016-10-26","2016-11-09")))),
+        col=palette()[2],lty=2)
+  lines(x=as.Date(c("2016-09-14","2016-09-28","2016-10-12","2016-10-26")),
+        y=predict(lm2,newdata=data.frame(Date=as.Date(c("2016-09-14","2016-09-28","2016-10-12","2016-10-26")))),
+        lty=1,col=palette()[2],lwd=1.2)
+  
+  
   
   
   #- plot height of control trees
-  with(subset(dfa,HWtrt=="C" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")), plot(Date, Stem_length_cm.mean, pch=1, col=T_treatment,
+  with(subset(dfa,HWtrt=="C" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")), plot(Date-3, Stem_length_cm.mean, pch=1, col=T_treatment,
                 ylab="Height (cm)",axes=F,xlim=c(as.Date("2016-9-1"),as.Date("2016-12-1")),
                 ylim=c(min(Stem_length_cm.mean-Stem_length_cm.se,na.rm=T),max(Stem_length_cm.mean+Stem_length_cm.se,na.rm=T)),
-                panel.first=adderrorbars(Date, Stem_length_cm.mean, 
+                panel.first=adderrorbars(Date-3, Stem_length_cm.mean, 
                                          Stem_length_cm.se, direction="updown",
                 col=T_treatment,barlen=0)
   ))
   #- plot height of heatwave trees
-  with(subset(dfa,HWtrt=="HW" & Date>as.Date("2016-9-1")& Date<as.Date("2016-11-15")), points(Date+3, Stem_length_cm.mean, pch=16, col=T_treatment,
+  with(subset(dfa,HWtrt=="HW" & Date>as.Date("2016-9-1")& Date<as.Date("2016-11-15")), points(Date, Stem_length_cm.mean, pch=16, col=T_treatment,
                                                                ylab="Stem diameter (mm)",axes=F,xlim=c(as.Date("2016-9-1"),as.Date("2016-12-1")),
                                                                ylim=c(min(Stem_length_cm.mean-Stem_length_cm.se,na.rm=T),max(Stem_length_cm.mean+Stem_length_cm.se,na.rm=T)),
-                                                               panel.first=adderrorbars(Date+3, Stem_length_cm.mean, 
+                                                               panel.first=adderrorbars(Date, Stem_length_cm.mean, 
                                                                                         Stem_length_cm.se, direction="updown",
                                                                                         col=T_treatment,barlen=0)
   ))
@@ -84,7 +103,23 @@ figure_diamHeight_timeseries <- function(hddata,type="chamber"){
   legend("bottomright",legend=letters[2],cex=1.4,bty="n")
   
   
-  
+  #-- add linear models fit to the first four dates, extrapolated to the fifth
+  lm3 <- lm(Stem_length_cm.mean~Date,
+            data=subset(dfa,HWtrt=="HW" & T_treatment=="control" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
+  lines(x=as.Date(c("2016-10-26","2016-11-09")),
+        y=predict(lm3,newdata=data.frame(Date=as.Date(c("2016-10-26","2016-11-09")))),
+        lty=2,col=palette()[1])
+  lines(x=as.Date(c("2016-09-14","2016-09-28","2016-10-12","2016-10-26")),
+        y=predict(lm3,newdata=data.frame(Date=as.Date(c("2016-09-14","2016-09-28","2016-10-12","2016-10-26")))),
+        lty=1,col=palette()[1],lwd=1.2)
+  lm4 <- lm(Stem_length_cm.mean~Date,
+            data=subset(dfa,HWtrt=="HW" & T_treatment=="warmed" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
+  lines(x=as.Date(c("2016-10-26","2016-11-09")),
+        y=predict(lm4,newdata=data.frame(Date=as.Date(c("2016-10-26","2016-11-09")))),
+        col=palette()[2],lty=2)
+  lines(x=as.Date(c("2016-09-14","2016-09-28","2016-10-12","2016-10-26")),
+        y=predict(lm4,newdata=data.frame(Date=as.Date(c("2016-09-14","2016-09-28","2016-10-12","2016-10-26")))),
+        lty=1,col=palette()[2],lwd=1.2)
   
 }
 
