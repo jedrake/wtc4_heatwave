@@ -66,7 +66,7 @@ IRT.dat.m <- data.frame(dplyr::summarize(dplyr::group_by(IRT.dat, DateTime_hr, c
                                          PPFD_Avg=mean(PPFD_Avg,na.rm=T)))
 
 
-Trend.dat <- Trend.dat[,c("chamber","DateTime_hr","PAR","Tair_al","RH_al")]
+Trend.dat <- Trend.dat[,c("chamber","DateTime_hr","Tair_al","RH_al")]
 Trend.dat.m <- data.frame(dplyr::summarize(dplyr::group_by(Trend.dat, DateTime_hr, chamber), 
                                            Tair_al =mean(Tair_al ,na.rm=T),
                                            RH_al=mean(RH_al,na.rm=T)))
@@ -133,7 +133,9 @@ ll3 <- rbind(c1,c2)
 
 #-----------------------------------------------------------------------------------------------------------
 #- merge the within-chamber met data with the leaf light dataset
-d5 <- merge(TrendlogChDF,ll3,by=c("chamber","DateTime"),all.x=F)
+#d5 <- merge(TrendlogChDF,ll3,by=c("chamber","DateTime"),all.x=F) # can't allocate vector of 105 MB
+d5 <- merge(subset(TrendlogChDF,as.Date(DateTime)>=as.Date("2016-6-1") & as.Date(DateTime)<=as.Date("2016-9-30")),
+            ll3,by=c("chamber","DateTime"),all.x=F)
 
 #- merge in the leaf temperatures
 dat.ll <- merge(d5,d,by=c("chamber","DateTime"))
@@ -164,6 +166,7 @@ windows()
 par(las=1,mar=c(6,6,1,6),cex.lab=1.5,cex.axis=1.1)
 #- plot leaf temperature
 plot(LeafT_Avg.1.~DateTime,data=subset(dat.ll.sub,chamber=="C10"),type="b",col="black",ylim=c(22,28),xaxt="n",
+     xlab="Time",
      ylab=expression(Temperature~(degree*C)))
 text(x=dat.ll.sub$DateTime[10],y=26,expression(T[leaf]))
 
@@ -183,6 +186,8 @@ title(ylab=expression(PPFD~(mu*mol~m^-2~s^-1)),xpd=NA,line=-28)
 
 #- add x-axis 
 axis.POSIXct(side=1,x=subset(dat.ll.sub,chamber=="C10")$DateTime,format="%H:%M")
+
+
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 
@@ -239,37 +244,38 @@ Tdat_hr <- summaryBy(.~chamber+DateTime_hr2,data=Tdat,keep.names=T)
 windows(100,100)
 par(mfrow=c(2,2),las=1,cex.lab=1.5,mar=c(6,6,1,1))
 lims <- c(0,40)
+parlimit=0
 
 #- plot leaf temperatures relative to air temperature
-plot(TargTempC_Avg~Tair_al,data=Tdat_hr,ylim=lims,xlim=lims,pch=3,
+plot(TargTempC_Avg~Tair_al,data=subset(Tdat_hr,PAR>parlimit),ylim=lims,xlim=lims,pch=3,
      xlab=expression(T[air]~(degree*C)),
      ylab=expression(T[l-IR]));abline(0,1,col="grey",lty=2)
-lm1 <- lm(TargTempC_Avg~Tair_al,data=Tdat_hr)
+lm1 <- lm(TargTempC_Avg~Tair_al,data=subset(Tdat_hr,PAR>parlimit))
 lines(predict.lm(lm1,newdat=data.frame(Tair_al=seq(0,35,length.out=101))) ~ seq(0,35,length.out=101),lwd=3,col="grey")
 legend("topleft",legend=letters[1],cex=1.4,bty="n")
 
-plot(LeafT_Avg.1.~Tair_al,data=Tdat_hr,ylim=lims,xlim=lims,pch=3,
+plot(LeafT_Avg.1.~Tair_al,data=subset(Tdat_hr,PAR>parlimit),ylim=lims,xlim=lims,pch=3,
      xlab=expression(T[air]~(degree*C)),
      ylab=expression(T[l-TC]));abline(0,1,col="grey",lty=2)
-points(LeafT_Avg.2.~Tair_al,data=Tdat_hr,pch=3)
-lm2 <- lm(Tleaf~Tair_al,data=Tdat_hr)
+points(LeafT_Avg.2.~Tair_al,data=subset(Tdat_hr,PAR>parlimit),pch=3)
+lm2 <- lm(Tleaf~Tair_al,data=subset(Tdat_hr,PAR>parlimit))
 lines(predict.lm(lm2,newdat=data.frame(Tair_al=seq(0,35,length.out=101))) ~ seq(0,35,length.out=101),lwd=3,col="grey")
 legend("topleft",legend=letters[2],cex=1.4,bty="n")
 
 
 #- plot covariance between temperature measurements
-plot(Tleaf~TargTempC_Avg,data=Tdat_hr,ylim=lims,xlim=lims,pch=3,
+plot(Tleaf~TargTempC_Avg,data=subset(Tdat_hr,PAR>parlimit),ylim=lims,xlim=lims,pch=3,
      xlab=expression(T[l-IR]~(degree*C)),
      ylab=expression(T[l-TC]));abline(0,1,col="grey",lty=2)
-lm3 <- lm(Tleaf~TargTempC_Avg,data=Tdat_hr)
+lm3 <- lm(Tleaf~TargTempC_Avg,data=subset(Tdat_hr,PAR>parlimit))
 lines(predict.lm(lm3,newdat=data.frame(TargTempC_Avg=seq(0,35,length.out=101))) ~ seq(0,35,length.out=101),lwd=3,col="grey")
 confint(lm3)
 legend("topleft",legend=letters[3],cex=1.4,bty="n")
 
 #- plot the excursion between Tleaf and Tair as a function of PPFD
-plot(Tdiff_IR~PAR,data=subset(Tdat_hr,PAR>4),ylim=c(-5,10),xlim=c(0,2000),pch=3,col="black",
+plot(Tdiff_IR~PAR,data=subset(Tdat_hr,PAR>4),ylim=c(-5,12),xlim=c(0,2000),pch=3,col="black",
      xlab=expression(PPFD~(mu*mol~m^-2~s^-1)),
-     ylab=expression(T[air]-T[leaf]~(degree*C)));abline(h=0)
+     ylab=expression(T[leaf]-T[air]~(degree*C)));abline(h=0)
 points(Tdiff_TC~PAR,data=Tdat_hr,pch=3,col="blue")
 legend("bottomright",fill=c("black","blue","red"),legend=c("Infrared","Thermocouple","Thermal images"))
 lm4 <- lm(Tdiff_TC~PAR,data=Tdat_hr)
@@ -298,10 +304,10 @@ TCdat <- rbind(TCdat1,TCdat2[,1:6])
 TCdat$Date <- as.Date(TCdat$Date)
 names(TCdat)[5] <- "Tleaf_Thermo"
 TCdat$DateTime <- as.POSIXct(paste(TCdat$Date,TCdat$Time,sep=" "),format="%F %R",tz="GMT")
-TCdat$DateTime_hr <- nearestTimeStep(TCdat$DateTime, nminutes = 15, align = "floor")
+TCdat$DateTime_hr2 <- nearestTimeStep(TCdat$DateTime, nminutes = 60, align = "floor")
 
 #- merge thermal camera data in with IR and TC data. Note that IR and TC data will be duplicated.
-TCdat.all <- merge(TCdat,Tdat,by=c("chamber","DateTime_hr"))
+TCdat.all <- merge(TCdat,Tdat,by=c("chamber","DateTime_hr2"))
 TCdat.all$Tdiff_Thermo <- with(TCdat.all,Tleaf_Thermo-Tair_al)
 
 points(Tdiff_Thermo~PAR,data=TCdat.all,pch=16,col="red")
