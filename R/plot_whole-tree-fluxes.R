@@ -78,86 +78,94 @@ wtc.m2 <- summaryBy(.~DateTime_hr+combotrt,data=subset(wtc.m,as.Date(DateTime_hr
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 #- plot time courses of air temperature, photosynthesis and transpiraiton during the heatwave.
-
-windows(80,70)
-par(mar=c(2,6,1,6),oma=c(2,0,4,0),cex.lab=1.6,las=1,cex.axis=1.2)
-layout(matrix(c(1,2,3), 3, 1, byrow = TRUE), 
-       widths=c(1,1,1), heights=c(1,2,2))
-palette(c("blue","black","orange","red"))
-
-#---
-#- plot Tair
-plotBy(Tair_al.mean~DateTime_hr|combotrt,data=wtc.m2,type="l",lwd=3,lty=1,
-       ylab=expression(T[air]~(degree*C)),ylim=c(5,45),legend=F)
-axis(side = 4,ylab="",col="black",col.axis="black")
-adderrorbars(x=wtc.m2$DateTime_hr,y=wtc.m2$Tair_al.mean,SE=wtc.m2$Tair_al.se,
-             direction="updown",col=wtc.m2$combotrt,barlen=0,lwd=0.5)
-plotBy(Tair_al.mean~DateTime_hr|combotrt,data=wtc.m2,legend=F,type="l",lty=1,lwd=3, add=T)
-
-#- add shaded rectangle for heatwave
-dates <- as.POSIXct(c("2016-10-31 18:00","2016-11-4 16:00"),format="%Y-%m-%d %R")
-rect(xleft=dates[1],ybottom=-4,xright=dates[2],ytop=55,col="darkgrey",density=7) 
-#- add legend
-legend(x=starttime-112000,y=65,xpd=NA,lwd=3,col=palette()[1:4],ncol=4,cex=1.5,bty="n",
-       legend=c("Ambient-Control","Ambient-Heatwave","Warmed-Control","Warmed-Heatwave"))
-legend("topright",legend=letters[1],cex=2,bty="n")
-
-#---
-#- plot photosynthesis
-plotBy(Photo.mean~DateTime_hr|combotrt,data=wtc.m2,legend=F,type="l",lty=1,lwd=3,ylim=c(-1,12),las=1,
-       ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)));abline(h=0)
-rect(xleft=dates[1],ybottom=-5,xright=dates[2],ytop=20,col="darkgrey",density=7) #add rectangles for heatwave
-
-#- replot and add error bars
-axis(side = 4,ylab="",col="black",col.axis="black",las=1)
-adderrorbars(x=wtc.m2$DateTime_hr,y=wtc.m2$Photo.mean,SE=wtc.m2$Photo.se,
-             direction="updown",col=wtc.m2$combotrt,barlen=0,lwd=0.5)
-plotBy(Photo.mean~DateTime_hr|combotrt,data=wtc.m2,legend=F,type="l",lty=1,lwd=3.5,ylim=c(-1,12),las=1,add=T,
-       ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)))
-
-legend("topright",legend=letters[2],cex=2,bty="n")
-
-#---
-#- plot transpiration
-plotBy(Trans.mean~DateTime_hr|combotrt,data=wtc.m2,legend=F,type="l",lty=1,lwd=3,ylim=c(0,3),las=1,
-       ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)));abline(h=0)
-rect(xleft=dates[1],ybottom=-1,xright=dates[2],ytop=4,col="darkgrey",density=7) #add rectangles for heatwave
-
-axis(side = 4,ylab="",col="black",col.axis="black",las=1)
-adderrorbars(x=wtc.m2$DateTime_hr,y=wtc.m2$Trans.mean,SE=wtc.m2$Trans.se,
-             direction="updown",col=wtc.m2$combotrt,barlen=0,lwd=0.5)
-plotBy(Trans.mean~DateTime_hr|combotrt,data=wtc.m2,legend=F,type="l",lty=1,lwd=3.5,ylim=c(0,3),las=1,add=T,
-       ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)));abline(h=0)
-legend("topright",legend=letters[3],cex=2,bty="n")
-
-
-#-----------------------------------------------------------------------------------------------------------
-#-----------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-#-----------------------------------------------------------------------------------------------------------
-#-----------------------------------------------------------------------------------------------------------
-#- plot time courses of air temperature, photosynthesis and transpiraiton during the heatwave.
-#- ALTERNATE VERSION WITH TWO TREATMENTS
-
+# 
+# windows(80,70)
+# par(mar=c(2,6,1,6),oma=c(2,0,4,0),cex.lab=1.6,las=1,cex.axis=1.2)
+# layout(matrix(c(1,2,3), 3, 1, byrow = TRUE), 
+#        widths=c(1,1,1), heights=c(1,2,2))
+# palette(c("blue","black","orange","red"))
+# 
+# #---
+# #- plot Tair
+# plotBy(Tair_al.mean~DateTime_hr|combotrt,data=wtc.m2,type="l",lwd=3,lty=1,
+#        ylab=expression(T[air]~(degree*C)),ylim=c(5,45),legend=F)
+# axis(side = 4,ylab="",col="black",col.axis="black")
+# adderrorbars(x=wtc.m2$DateTime_hr,y=wtc.m2$Tair_al.mean,SE=wtc.m2$Tair_al.se,
+#              direction="updown",col=wtc.m2$combotrt,barlen=0,lwd=0.5)
+# plotBy(Tair_al.mean~DateTime_hr|combotrt,data=wtc.m2,legend=F,type="l",lty=1,lwd=3, add=T)
+# 
+# #- add shaded rectangle for heatwave
+# dates <- as.POSIXct(c("2016-10-31 18:00","2016-11-4 16:00"),format="%Y-%m-%d %R")
+# rect(xleft=dates[1],ybottom=-4,xright=dates[2],ytop=55,col="darkgrey",density=7) 
+# #- add legend
+# legend(x=starttime-112000,y=65,xpd=NA,lwd=3,col=palette()[1:4],ncol=4,cex=1.5,bty="n",
+#        legend=c("Ambient-Control","Ambient-Heatwave","Warmed-Control","Warmed-Heatwave"))
+# legend("topright",legend=letters[1],cex=2,bty="n")
+# 
+# #---
+# #- plot photosynthesis
+# plotBy(Photo.mean~DateTime_hr|combotrt,data=wtc.m2,legend=F,type="l",lty=1,lwd=3,ylim=c(-1,12),las=1,
+#        ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)));abline(h=0)
+# rect(xleft=dates[1],ybottom=-5,xright=dates[2],ytop=20,col="darkgrey",density=7) #add rectangles for heatwave
+# 
+# #- replot and add error bars
+# axis(side = 4,ylab="",col="black",col.axis="black",las=1)
+# adderrorbars(x=wtc.m2$DateTime_hr,y=wtc.m2$Photo.mean,SE=wtc.m2$Photo.se,
+#              direction="updown",col=wtc.m2$combotrt,barlen=0,lwd=0.5)
+# plotBy(Photo.mean~DateTime_hr|combotrt,data=wtc.m2,legend=F,type="l",lty=1,lwd=3.5,ylim=c(-1,12),las=1,add=T,
+#        ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)))
+# 
+# legend("topright",legend=letters[2],cex=2,bty="n")
+# 
+# #---
+# #- plot transpiration
+# plotBy(Trans.mean~DateTime_hr|combotrt,data=wtc.m2,legend=F,type="l",lty=1,lwd=3,ylim=c(0,3),las=1,
+#        ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)));abline(h=0)
+# rect(xleft=dates[1],ybottom=-1,xright=dates[2],ytop=4,col="darkgrey",density=7) #add rectangles for heatwave
+# 
+# axis(side = 4,ylab="",col="black",col.axis="black",las=1)
+# adderrorbars(x=wtc.m2$DateTime_hr,y=wtc.m2$Trans.mean,SE=wtc.m2$Trans.se,
+#              direction="updown",col=wtc.m2$combotrt,barlen=0,lwd=0.5)
+# plotBy(Trans.mean~DateTime_hr|combotrt,data=wtc.m2,legend=F,type="l",lty=1,lwd=3.5,ylim=c(0,3),las=1,add=T,
+#        ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)));abline(h=0)
+# legend("topright",legend=letters[3],cex=2,bty="n")
+# 
+# 
+# #-----------------------------------------------------------------------------------------------------------
+# #-----------------------------------------------------------------------------------------------------------
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# #-----------------------------------------------------------------------------------------------------------
+# #-----------------------------------------------------------------------------------------------------------
+# #- plot time courses of air temperature, photosynthesis and transpiraiton during the heatwave.
+# #- ALTERNATE VERSION WITH TWO TREATMENTS
+# 
 wtc.m2.two <- summaryBy(.~DateTime_hr+HWtrt,
-                        data=subset(wtc.m,as.Date(DateTime_hr) <= as.Date("2016-11-6") & as.Date(DateTime_hr) >= as.Date("2016-10-30")),FUN=c(mean,se))
+                       data=subset(wtc.m,as.Date(DateTime_hr) <= as.Date("2016-11-6") & as.Date(DateTime_hr) >= as.Date("2016-10-30")),FUN=c(mean,se))
+
+
+
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+# Try a plot combining the timecourse of whole-tree fluxes and a bar chart of flux sums during the heatwave
+
 
 
 windows(80,70)
-par(mar=c(2,6,1,6),oma=c(2,0,4,0),cex.lab=1.6,las=1,cex.axis=1.2)
-layout(matrix(c(1,2,3), 3, 1, byrow = TRUE), 
-       widths=c(1,1,1), heights=c(1,2,2))
-palette(c("blue","red"))
+par(mar=c(2,2,1,2),oma=c(4,5,2,4),cex.lab=1.6,las=1,cex.axis=1.2)
+layout(matrix(c(1,2,3,4,5,6), 3, 2, byrow = TRUE), 
+       widths=c(5,1), heights=c(1,3,3))
+
+palette(c("#00A2FF", "#F5690C", "#1C41D6", "#FF0A0A")) #shades of blue and red
 
 #---
 #- plot Tair
-plotBy(Tair_al.mean~DateTime_hr|HWtrt,data=wtc.m2.two,type="l",lwd=3,lty=1,
+plotBy(Tair_al.mean~DateTime_hr|HWtrt,data=wtc.m2.two,type="l",lwd=3,lty=1,col=c("blue","red"),
        ylab=expression(T[air]~(degree*C)),ylim=c(5,45),legend=F)
 axis(side = 4,ylab="",col="black",col.axis="black")
 adderrorbars(x=wtc.m2.two$DateTime_hr,y=wtc.m2.two$Tair_al.mean,SE=wtc.m2.two$Tair_al.se,
@@ -167,37 +175,120 @@ adderrorbars(x=wtc.m2.two$DateTime_hr,y=wtc.m2.two$Tair_al.mean,SE=wtc.m2.two$Ta
 dates <- as.POSIXct(c("2016-10-31 18:00","2016-11-4 16:00"),format="%Y-%m-%d %R")
 rect(xleft=dates[1],ybottom=-4,xright=dates[2],ytop=55,col="darkgrey",density=7) 
 #- add legend
-legend(x=starttime+212000,y=65,xpd=NA,lwd=3,col=palette()[1:2],ncol=4,cex=1.5,bty="n",
+legend(x=starttime+212000,y=68,xpd=NA,lwd=3,col=c("blue","red"),ncol=4,cex=1.5,bty="n",
        legend=c("Control","Heatwave"))
 legend("topright",legend=letters[1],cex=2,bty="n")
 
+#empty plot
+frame()
+
 #---
-#- plot photosynthesis
-plotBy(Photo.mean~DateTime_hr|HWtrt,data=wtc.m2.two,legend=F,type="l",lty=1,lwd=3,ylim=c(-1,12),las=1,
+#- plot photosynthesis timecourse
+plotBy(Photo.mean~DateTime_hr|HWtrt,data=wtc.m2.two,legend=F,type="l",lty=1,lwd=3,ylim=c(-1,12),las=1,col=c("blue","red"),
        ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)));abline(h=0)
 rect(xleft=dates[1],ybottom=-5,xright=dates[2],ytop=20,col="darkgrey",density=7) #add rectangles for heatwave
-
-#- replot and add error bars
 axis(side = 4,ylab="",col="black",col.axis="black",las=1)
 adderrorbars(x=wtc.m2.two$DateTime_hr,y=wtc.m2.two$Photo.mean,SE=wtc.m2.two$Photo.se,
              direction="updown",col=wtc.m2.two$HWtrt,barlen=0,lwd=0.5)
-plotBy(Photo.mean~DateTime_hr|HWtrt,data=wtc.m2.two,legend=F,type="l",lty=1,lwd=3.5,ylim=c(-1,12),las=1,add=T,
+plotBy(Photo.mean~DateTime_hr|HWtrt,data=wtc.m2.two,legend=F,type="l",lty=1,lwd=3.5,ylim=c(-1,12),las=1,add=T,col=c("blue","red"),
        ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)))
-
 legend("topright",legend=letters[2],cex=2,bty="n")
 
+
+#-- plot photo bars
+toplot.HW <- cbind(toplot2[,1],toplot3[,1],toplot2[,2],toplot3[,2])
+
+xvals <- barplot(toplot2[,1], beside=T, ylab="", names.arg=rep("",4),yaxt="n",space=0,
+                 cex.names=1.5, las=1, ylim=c(0,16), col=palette()[1:4])#col=brewer.pal(6,"Set1")[3:6])
+adderrorbars(x=xvals[,1],y=toplot.all3[,1],SE=sums.HW$Photo.g.se,
+             direction="updown",col="black",barlen=0.05,lwd=0.5)
+axis(4)
+legend(x=0.8,y=16,legend=letters[4],cex=2,bty="n")
+title(ylab=expression(Total~A[canopy]~(g~m^-2)),outer=T,line=-60,cex.lab=1.8,xpd=NA,adj=0.7) # y-axis label
+text(x=xvals[,1]+0.3,y=-0.8,labels=c("A:C","A:HW","W:C","W:HW"),xpd=T,srt=90,pos=2,cex=1.4,xpd=NA)
+
 #---
-#- plot transpiration
-plotBy(Trans.mean~DateTime_hr|HWtrt,data=wtc.m2.two,legend=F,type="l",lty=1,lwd=3,ylim=c(0,3),las=1,
+#- plot transpiration timecourse
+plotBy(Trans.mean~DateTime_hr|HWtrt,data=wtc.m2.two,legend=F,type="l",lty=1,lwd=3,ylim=c(0,3),las=1,col=c("blue","red"),
        ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)));abline(h=0)
 rect(xleft=dates[1],ybottom=-1,xright=dates[2],ytop=4,col="darkgrey",density=7) #add rectangles for heatwave
-
 axis(side = 4,ylab="",col="black",col.axis="black",las=1)
 adderrorbars(x=wtc.m2.two$DateTime_hr,y=wtc.m2.two$Trans.mean,SE=wtc.m2.two$Trans.se,
              direction="updown",col=wtc.m2.two$HWtrt,barlen=0,lwd=0.5)
-plotBy(Trans.mean~DateTime_hr|HWtrt,data=wtc.m2.two,legend=F,type="l",lty=1,lwd=3.5,ylim=c(0,3),las=1,add=T,
+plotBy(Trans.mean~DateTime_hr|HWtrt,data=wtc.m2.two,legend=F,type="l",lty=1,lwd=3.5,ylim=c(0,3),las=1,add=T,col=c("blue","red"),
        ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)));abline(h=0)
 legend("topright",legend=letters[3],cex=2,bty="n")
+
+#-- plot transpiration bars
+xvals <- barplot(toplot2[,2], beside=T, ylab="", names.arg=rep("",4),yaxt="n",space=0,
+                 cex.names=1.5, las=1, ylim=c(0,10), col=palette()[1:4])#col=brewer.pal(6,"Set1")[3:6])
+adderrorbars(x=xvals[,1],y=toplot2[,2],SE=sums.HW$Trans.kg.se,
+             direction="updown",col="black",barlen=0.05,lwd=0.5)
+axis(4)
+legend(x=0.8,y=9,legend=letters[5],cex=2,bty="n")
+title(ylab=expression(Total~E[canopy]~(kg~m^-2)),outer=T,line=-60,cex.lab=1.8,xpd=NA,adj=0.1) # y-axis label
+text(x=xvals[,1]+0.3,y=-0.5,labels=c("A:C","A:HW","W:C","W:HW"),xpd=T,srt=90,pos=2,cex=1.4,xpd=NA)
+
+#-- add left y-axis titles
+title(ylab=expression(T[air]~(degree*C)),outer=T,adj=0.97,line=1)
+title(ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)),outer=T,adj=0.7,line=1)
+title(ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)),outer=T,adj=0.1,line=1)
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+
+
+
+# 
+# 
+# windows(80,70)
+# par(mar=c(2,6,1,6),oma=c(2,0,4,0),cex.lab=1.6,las=1,cex.axis=1.2)
+# layout(matrix(c(1,2,3), 3, 1, byrow = TRUE), 
+#        widths=c(1,1,1), heights=c(1,2,2))
+# palette(c("blue","red"))
+# 
+# #---
+# #- plot Tair
+# plotBy(Tair_al.mean~DateTime_hr|HWtrt,data=wtc.m2.two,type="l",lwd=3,lty=1,
+#        ylab=expression(T[air]~(degree*C)),ylim=c(5,45),legend=F)
+# axis(side = 4,ylab="",col="black",col.axis="black")
+# adderrorbars(x=wtc.m2.two$DateTime_hr,y=wtc.m2.two$Tair_al.mean,SE=wtc.m2.two$Tair_al.se,
+#              direction="updown",col=wtc.m2.two$HWtrt,barlen=0,lwd=0.5)
+# 
+# #- add shaded rectangle for heatwave
+# dates <- as.POSIXct(c("2016-10-31 18:00","2016-11-4 16:00"),format="%Y-%m-%d %R")
+# rect(xleft=dates[1],ybottom=-4,xright=dates[2],ytop=55,col="darkgrey",density=7) 
+# #- add legend
+# legend(x=starttime+212000,y=65,xpd=NA,lwd=3,col=palette()[1:2],ncol=4,cex=1.5,bty="n",
+#        legend=c("Control","Heatwave"))
+# legend("topright",legend=letters[1],cex=2,bty="n")
+# 
+# #---
+# #- plot photosynthesis
+# plotBy(Photo.mean~DateTime_hr|HWtrt,data=wtc.m2.two,legend=F,type="l",lty=1,lwd=3,ylim=c(-1,12),las=1,
+#        ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)));abline(h=0)
+# rect(xleft=dates[1],ybottom=-5,xright=dates[2],ytop=20,col="darkgrey",density=7) #add rectangles for heatwave
+# 
+# #- replot and add error bars
+# axis(side = 4,ylab="",col="black",col.axis="black",las=1)
+# adderrorbars(x=wtc.m2.two$DateTime_hr,y=wtc.m2.two$Photo.mean,SE=wtc.m2.two$Photo.se,
+#              direction="updown",col=wtc.m2.two$HWtrt,barlen=0,lwd=0.5)
+# plotBy(Photo.mean~DateTime_hr|HWtrt,data=wtc.m2.two,legend=F,type="l",lty=1,lwd=3.5,ylim=c(-1,12),las=1,add=T,
+#        ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)))
+# 
+# legend("topright",legend=letters[2],cex=2,bty="n")
+# 
+# #---
+# #- plot transpiration
+# plotBy(Trans.mean~DateTime_hr|HWtrt,data=wtc.m2.two,legend=F,type="l",lty=1,lwd=3,ylim=c(0,3),las=1,
+#        ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)));abline(h=0)
+# rect(xleft=dates[1],ybottom=-1,xright=dates[2],ytop=4,col="darkgrey",density=7) #add rectangles for heatwave
+# 
+# axis(side = 4,ylab="",col="black",col.axis="black",las=1)
+# adderrorbars(x=wtc.m2.two$DateTime_hr,y=wtc.m2.two$Trans.mean,SE=wtc.m2.two$Trans.se,
+#              direction="updown",col=wtc.m2.two$HWtrt,barlen=0,lwd=0.5)
+# plotBy(Trans.mean~DateTime_hr|HWtrt,data=wtc.m2.two,legend=F,type="l",lty=1,lwd=3.5,ylim=c(0,3),las=1,add=T,
+#        ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)));abline(h=0)
+# legend("topright",legend=letters[3],cex=2,bty="n")
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 
@@ -322,6 +413,13 @@ summaryBy(Photo~HWtrt,data=hw)
 summaryBy(Trans~HWtrt,data=hw)
 summaryBy(RH~HWtrt,data=hw)
 summaryBy(VPD~HWtrt,data=hw)
+#- average across chambers, do simple stats test. Significant HW effects for Photo & Trans
+hw.chamber <- summaryBy(Photo+Trans~chamber+T_treatment+HWtrt,data=hw,FUN=mean,keep.names=T)
+lm.photo.hw <- lm(Photo~T_treatment*HWtrt,data=hw.chamber)
+Anova(lm.photo.hw)
+lm.Trans.hw <- lm(Trans~T_treatment*HWtrt,data=hw.chamber)
+Anova(lm.Trans.hw)
+
 
 #- do the same, but for the three days after the heatwave
 post1 <- subset(wtc.m,as.Date(DateTime_hr) >= as.Date("2016-11-4") & as.Date(DateTime_hr) <= as.Date("2016-11-6"))
@@ -330,6 +428,13 @@ post <- subset(post1,hour(DateTime_hr) >= 10 & hour(DateTime_hr) <= 16)
 boxplot(Photo~combotrt,data=post)
 summaryBy(Photo~HWtrt,data=post)
 summaryBy(Trans~HWtrt,data=post)
+#- average across chambers, do simple stats test. Significant HW effects for Photo & Trans
+post.chamber <- summaryBy(Photo+Trans~chamber+T_treatment+HWtrt,data=post,FUN=mean,keep.names=T)
+lm.photo.post <- lm(Photo~T_treatment*HWtrt,data=post.chamber)
+Anova(lm.photo.post)
+lm.Trans.post <- lm(Trans~T_treatment*HWtrt,data=post.chamber)
+Anova(lm.Trans.post)
+
 
 #- calculate the average Ecanopy during the night during the heatwave for each treatment.
 hw.night1 <- subset(wtc.m,as.Date(DateTime_hr) >= as.Date("2016-10-31") & as.Date(DateTime_hr) <= as.Date("2016-11-3") & PAR < 4)
@@ -545,11 +650,12 @@ toplot.all3 <- cbind(toplot2[,1],toplot3[,1],toplot2[,2],toplot3[,2])
 
 windows()
 par(oma=c(3,4,0,0))
-palette(c("blue","darkgrey","orange","red"))
+#palette(c("blue","darkgrey","orange","red"))
+palette(c("#00A2FF", "#F5690C", "#1C41D6", "#FF0A0A")) #shades of blue and red
 
 #- plot flux sums for CO2 (first 2 groups, HW, REC) and then H2O (last 2 groups, HW, REC)
 xvals <- barplot(toplot.all3, beside=T, ylab="", names.arg=rep("",ncol(toplot.all3)),
-                 cex.names=1.5, las=1, ylim=c(0,16), col=c("blue","darkgrey","orange","red"))
+                 cex.names=1.5, las=1, ylim=c(0,16), col=palette()[1:4])
 adderrorbars(x=xvals[,1],y=toplot.all3[,1],SE=sums.HW$Photo.g.se,
              direction="updown",col="black",barlen=0.05,lwd=0.5)
 adderrorbars(x=xvals[,2],y=toplot.all3[,2],SE=sums.REC$Photo.g.se,
@@ -586,14 +692,24 @@ sums.m3 <- summaryBy(Photo.g+Trans.kg~HWtrt,data=tosum.HW,FUN=c(mean))
 (sums.m3[1,2]-sums.m3[2,2])/sums.m3[1,2] # 40% reduction in C uptake
 (sums.m3[1,3]-sums.m3[2,3])/sums.m3[1,3] # 5% reduction in H2O loss
 
+#- get averages of CO2 data (etc)
+mean(subset(wtc,PAR>100)$CO2CChamb)
+sd(subset(wtc,PAR>100)$CO2CChamb)
+
+#-------
+#- statistical analysis of integrated heatwave effects on C uptake and H2O loss.
+
+#- sum across chambers. Note that there are a few NA's, which will modestly affect the sums.
+HW_sums_chamber <- summaryBy(Photo.g+Trans.kg~chamber+T_treatment+HWtrt+combotrt,
+                     data=subset(tosum,as.Date(DateTime_hr)<=as.Date("2016-11-04")),FUN=sum,keep.names=T,na.rm=T)
 
 
+lm.C.sums <- lm(Photo.g~T_treatment*HWtrt,data=HW_sums_chamber)
+Anova(lm.C.sums)
 
-
-
-
-
-
+lm.W.sums <- lm(Trans.kg~T_treatment*HWtrt,data=HW_sums_chamber)
+Anova(lm.W.sums)
+#-------
 
 
 
@@ -682,93 +798,6 @@ legend("topright",legend=letters[5],cex=2,bty="n")
 
 
 
-
-
-#-----------------------------------------------------------------------------------------------------------
-#-----------------------------------------------------------------------------------------------------------
-# Try a plot combining the timecourse of whole-tree fluxes and a bar chart of flux sums during the heatwave
-
-
-
-windows(80,70)
-par(mar=c(2,2,1,2),oma=c(4,5,2,4),cex.lab=1.6,las=1,cex.axis=1.2)
-layout(matrix(c(1,2,3,4,5,6), 3, 2, byrow = TRUE), 
-       widths=c(5,1), heights=c(1,3,3))
-palette(c("blue","red"))
-
-
-#---
-#- plot Tair
-plotBy(Tair_al.mean~DateTime_hr|HWtrt,data=wtc.m2.two,type="l",lwd=3,lty=1,
-       ylab=expression(T[air]~(degree*C)),ylim=c(5,45),legend=F)
-axis(side = 4,ylab="",col="black",col.axis="black")
-adderrorbars(x=wtc.m2.two$DateTime_hr,y=wtc.m2.two$Tair_al.mean,SE=wtc.m2.two$Tair_al.se,
-             direction="updown",col=wtc.m2.two$HWtrt,barlen=0,lwd=0.5)
-
-#- add shaded rectangle for heatwave
-dates <- as.POSIXct(c("2016-10-31 18:00","2016-11-4 16:00"),format="%Y-%m-%d %R")
-rect(xleft=dates[1],ybottom=-4,xright=dates[2],ytop=55,col="darkgrey",density=7) 
-#- add legend
-legend(x=starttime+212000,y=68,xpd=NA,lwd=3,col=palette()[1:2],ncol=4,cex=1.5,bty="n",
-       legend=c("Control","Heatwave"))
-legend("topright",legend=letters[1],cex=2,bty="n")
-
-#empty plot
-frame()
-
-#---
-#- plot photosynthesis timecourse
-plotBy(Photo.mean~DateTime_hr|HWtrt,data=wtc.m2.two,legend=F,type="l",lty=1,lwd=3,ylim=c(-1,12),las=1,
-       ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)));abline(h=0)
-rect(xleft=dates[1],ybottom=-5,xright=dates[2],ytop=20,col="darkgrey",density=7) #add rectangles for heatwave
-axis(side = 4,ylab="",col="black",col.axis="black",las=1)
-adderrorbars(x=wtc.m2.two$DateTime_hr,y=wtc.m2.two$Photo.mean,SE=wtc.m2.two$Photo.se,
-             direction="updown",col=wtc.m2.two$HWtrt,barlen=0,lwd=0.5)
-plotBy(Photo.mean~DateTime_hr|HWtrt,data=wtc.m2.two,legend=F,type="l",lty=1,lwd=3.5,ylim=c(-1,12),las=1,add=T,
-       ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)))
-legend("topright",legend=letters[2],cex=2,bty="n")
-
-
-#-- plot photo bars
-toplot.HW <- cbind(toplot2[,1],toplot3[,1],toplot2[,2],toplot3[,2])
-
-xvals <- barplot(toplot2[,1], beside=T, ylab="", names.arg=rep("",4),yaxt="n",space=0,
-                 cex.names=1.5, las=1, ylim=c(0,16), col=brewer.pal(6,"Set1")[3:6])
-adderrorbars(x=xvals[,1],y=toplot.all3[,1],SE=sums.HW$Photo.g.se,
-             direction="updown",col="black",barlen=0.05,lwd=0.5)
-axis(4)
-legend(x=0.8,y=16,legend=letters[4],cex=2,bty="n")
-title(ylab=expression(Total~A[canopy]~(g~m^-2)),outer=T,line=-60,cex.lab=1.8,xpd=NA,adj=0.7) # y-axis label
-text(x=xvals[,1]+0.3,y=-0.8,labels=c("A:C","A:HW","W:C","W:HW"),xpd=T,srt=90,pos=2,cex=1.4,xpd=NA)
-
-#---
-#- plot transpiration timecourse
-plotBy(Trans.mean~DateTime_hr|HWtrt,data=wtc.m2.two,legend=F,type="l",lty=1,lwd=3,ylim=c(0,3),las=1,
-       ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)));abline(h=0)
-rect(xleft=dates[1],ybottom=-1,xright=dates[2],ytop=4,col="darkgrey",density=7) #add rectangles for heatwave
-axis(side = 4,ylab="",col="black",col.axis="black",las=1)
-adderrorbars(x=wtc.m2.two$DateTime_hr,y=wtc.m2.two$Trans.mean,SE=wtc.m2.two$Trans.se,
-             direction="updown",col=wtc.m2.two$HWtrt,barlen=0,lwd=0.5)
-plotBy(Trans.mean~DateTime_hr|HWtrt,data=wtc.m2.two,legend=F,type="l",lty=1,lwd=3.5,ylim=c(0,3),las=1,add=T,
-       ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)));abline(h=0)
-legend("topright",legend=letters[3],cex=2,bty="n")
-
-#-- plot transpiration bars
-xvals <- barplot(toplot2[,2], beside=T, ylab="", names.arg=rep("",4),yaxt="n",space=0,
-                 cex.names=1.5, las=1, ylim=c(0,10), col=brewer.pal(6,"Set1")[3:6])
-adderrorbars(x=xvals[,1],y=toplot2[,2],SE=sums.HW$Trans.kg.se,
-             direction="updown",col="black",barlen=0.05,lwd=0.5)
-axis(4)
-legend(x=0.8,y=9,legend=letters[5],cex=2,bty="n")
-title(ylab=expression(Total~E[canopy]~(kg~m^-2)),outer=T,line=-60,cex.lab=1.8,xpd=NA,adj=0.1) # y-axis label
-text(x=xvals[,1]+0.3,y=-0.5,labels=c("A:C","A:HW","W:C","W:HW"),xpd=T,srt=90,pos=2,cex=1.4,xpd=NA)
-
-#-- add left y-axis titles
-title(ylab=expression(T[air]~(degree*C)),outer=T,adj=0.97,line=1)
-title(ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)),outer=T,adj=0.7,line=1)
-title(ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)),outer=T,adj=0.1,line=1)
-#-----------------------------------------------------------------------------------------------------------
-#-----------------------------------------------------------------------------------------------------------
 
 
 
