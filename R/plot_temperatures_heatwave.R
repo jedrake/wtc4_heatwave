@@ -290,6 +290,10 @@ windows(70,80)
 par(mfrow=c(7,1),mar=c(0,6,0,6),oma=c(7,0,3,0),cex.lab=1.6,xpd=F,las=1)
 palette(c("blue","black","orange","red"))
 
+#- add shaded rectangle for heatwave
+dates <- as.POSIXct(c("2016-10-31 06:00:00","2016-11-4 04:00:00"),format="%Y-%m-%d %T",tz="GMT")
+
+
 #- plot PAR
 plotBy(PAR.mean~DateTime_hr,data=subset(wtc.trt,combotrt=="ambient_C"),legend=F,col="darkgrey",type="l",lwd=2,
        ylim=c(0,2000),ylab="PPFD",xaxt="n");axis(side=4)
@@ -298,6 +302,7 @@ legend(x=subset(wtc.trt,combotrt=="ambient_C")$DateTime_hr[1]-200000,
        y=2700,xpd=NA,lwd=3,col=palette()[1:4],ncol=4,cex=1.2,bty="n",
        legend=c("Ambient-Control","Ambient-Heatwave","Warmed-Control","Warmed-Heatwave"))
 legend("topright",legend=letters[1],cex=1.4,bty="n")
+rect(xleft=dates[1],ybottom=-50,xright=dates[2],ytop=3000,col="darkgrey",density=7) #add rectangles for HW
 
 #- plot VPD
 plotBy(VPD.mean~DateTime_hr|combotrt,data=wtc.trt,legend=F,col=palette()[1:4],type="l",lwd=2,
@@ -305,6 +310,7 @@ plotBy(VPD.mean~DateTime_hr|combotrt,data=wtc.trt,legend=F,col=palette()[1:4],ty
 adderrorbars(x=wtc.trt$DateTime_hr,y=wtc.trt$VPD.mean,SE=wtc.trt$VPD.se,direction="updown",col=wtc.trt$combotrt,barlen=0)
 axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime_hr,tz="GMT"))),las=3,cex.axis=1.5,labels=F)
 legend("topright",legend=letters[2],cex=1.4,bty="n")
+rect(xleft=dates[1],ybottom=-50,xright=dates[2],ytop=3000,col="darkgrey",density=7) #add rectangles for HW
 
 
 #- plot Tair
@@ -313,6 +319,8 @@ plotBy(Tair_al.mean~DateTime_hr|combotrt,data=wtc.trt,legend=F,col=palette()[1:4
 adderrorbars(x=wtc.trt$DateTime_hr,y=wtc.trt$Tair_al.mean,SE=wtc.trt$Tair_al.se,direction="updown",col=wtc.trt$combotrt,barlen=0)
 axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime_hr,tz="GMT"))),las=3,cex.axis=1.5,labels=F)
 legend("topright",legend=letters[3],cex=1.4,bty="n")
+rect(xleft=dates[1],ybottom=-50,xright=dates[2],ytop=3000,col="darkgrey",density=7) #add rectangles for HW
+
 
 #- plot Tleaf (IR)
 plotBy(TargTempC_Avg.mean~DateTime_hr|combotrt,data=dat.m,legend=F,col=palette()[1:4],type="l",lwd=2,ylim=c(5,50),
@@ -320,6 +328,7 @@ plotBy(TargTempC_Avg.mean~DateTime_hr|combotrt,data=dat.m,legend=F,col=palette()
 adderrorbars(x=dat.m$DateTime_hr,y=dat.m$TargTempC_Avg.mean,SE=dat.m$TargTempC_Avg.se,direction="updown",col=dat.m$combotrt,barlen=0)
 axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime_hr,tz="GMT"))),las=3,cex.axis=1.5,labels=F)
 legend("topright",legend=letters[4],cex=1.4,bty="n")
+rect(xleft=dates[1],ybottom=-50,xright=dates[2],ytop=3000,col="darkgrey",density=7) #add rectangles for HW
 
 #- plot Tleaf (TC)
 plotBy(Tleaf.mean~DateTime_hr|combotrt,data=dat.m,legend=F,col=palette()[1:4],type="l",lwd=2,ylim=c(5,50),
@@ -328,6 +337,7 @@ plotBy(Tleaf.mean~DateTime_hr|combotrt,data=dat.m,legend=F,col=palette()[1:4],ty
 adderrorbars(x=dat.m$DateTime_hr,y=dat.m$Tleaf.mean,SE=dat.m$Tleaf.se,direction="updown",col=dat.m$combotrt,barlen=0)
 axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime_hr,tz="GMT"))),las=3,cex.axis=1.5,labels=F)
 legend("topright",legend=letters[5],cex=1.4,bty="n")
+rect(xleft=dates[1],ybottom=-50,xright=dates[2],ytop=3000,col="darkgrey",density=7) #add rectangles for HW
 
 #- plot Tleaf diferrence (IR)
 plotBy(Tdiff_IR.mean~DateTime_hr|combotrt,data=dat.m,legend=F,col=palette()[1:4],type="l",lwd=2,ylim=c(-2,7),
@@ -336,6 +346,7 @@ plotBy(Tdiff_IR.mean~DateTime_hr|combotrt,data=dat.m,legend=F,col=palette()[1:4]
 adderrorbars(x=dat.m$DateTime_hr,y=dat.m$Tdiff_IR.mean,SE=dat.m$Tdiff_IR.se,direction="updown",col=dat.m$combotrt,barlen=0)
 axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime_hr,tz="GMT"))),las=3,cex.axis=1.5,labels=F)
 legend("topright",legend=letters[6],cex=1.4,bty="n")
+rect(xleft=dates[1],ybottom=-50,xright=dates[2],ytop=3000,col="darkgrey",density=7) #add rectangles for HW
 
 #- plot Tleaf diferrence (TC)
 plotBy(Tdiff_TC.mean~DateTime_hr|combotrt,data=dat.m,legend=F,col=palette()[1:4],type="l",lwd=2,ylim=c(-2,7),
@@ -344,6 +355,7 @@ plotBy(Tdiff_TC.mean~DateTime_hr|combotrt,data=dat.m,legend=F,col=palette()[1:4]
 adderrorbars(x=dat.m$DateTime_hr,y=dat.m$Tdiff_TC.mean,SE=dat.m$Tdiff_TC.se,direction="updown",col=dat.m$combotrt,barlen=0)
 axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime_hr,tz="GMT"))),las=3,cex.axis=1.5,labels=T)
 legend("topright",legend=letters[7],cex=1.4,bty="n")
+rect(xleft=dates[1],ybottom=-50,xright=dates[2],ytop=3000,col="darkgrey",density=7) #add rectangles for HW
 
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
