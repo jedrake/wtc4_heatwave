@@ -69,9 +69,9 @@ plot.thermdata <- function(x,...){
              bty="n", useRaster=TRUE, xaxt="n", yaxt="n", col=flirpal, legend.width=0.5)
 }
 
-
-
-#Read in photos
+#-----------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------
+#Read in canopy photos for fig 3
 
 img <- get_therm_temperature("Data/ThermalPhotos/IR_4679.jpg")
 img2 <- get_therm_temperature("Data/ThermalPhotos/IR_4691.jpg")
@@ -93,4 +93,52 @@ legend("topright", "d", bty='n', cex=2)
 image(img2$temperature, asp=img2$h/img2$w, zlim = c(25,50),
            bty="n", useRaster=TRUE, xaxt="n", yaxt="n", col=midgreypal)
 legend("topright", "e", bty='n', cex=2)
+#-----------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------
+
+
+
+
+
+
+#-----------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------
+#- read in the site photos
+site1 <- get_therm_temperature("Data/ThermalPhotos/IR_4803.jpg")
+site2 <- get_therm_temperature("Data/ThermalPhotos/IR_4757.jpg")
+
+
+#Distribution of tempertures: 18 to 42 C seems like a good range to display
+
+hist(site1$temperature, col="blue", xlab="Temperature", main="")
+range(site1$temperature)
+
+#Make figure
+windows(10,7)
+par(mfrow=c(1,1), mar=c(1,1,1,6),oma=c(0,0,0,0)) #
+
+zlims <- c(15,40)
+image(site1$temperature, asp=site1$h/site1$w, zlim = zlims,
+      bty="n", useRaster=TRUE, xaxt="n", yaxt="n", col=midgreypal)
+image.plot(legend.only = T,zlim = zlims,col=midgreypal)
+
+
+
+#Distribution of tempertures: 18 to 42 C seems like a good range to display
+hist(site2$temperature, col="blue", xlab="Temperature", main="")
+range(site2$temperature)
+
+#Make figure
+windows(10,7)
+par(mfrow=c(1,1), mar=c(1,1,1,6),oma=c(0,0,0,0)) #
+
+zlims <- c(15,40)
+image(site2$temperature, asp=site2$h/site2$w, zlim = zlims,
+      bty="n", useRaster=TRUE, xaxt="n", yaxt="n", col=midgreypal)
+image.plot(legend.only = T,zlim = zlims,col=midgreypal)
+#-----------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------
 
