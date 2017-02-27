@@ -73,6 +73,29 @@ wtc.m2 <- summaryBy(.~DateTime_hr+combotrt,data=subset(wtc.m,as.Date(DateTime_hr
 
 
 
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+#- sum across heatwave period, but for two treatments only!
+#- subset to the desired timeframe, convert to g C and kg H2O hr-1
+tosum <- subset(wtc.m,as.Date(DateTime_hr) >= as.Date("2016-10-31") & as.Date(DateTime_hr) <= as.Date("2016-11-4"))
+tosum$Photo.g <- tosum$Photo*1e-6*12.011*60*60
+tosum$Trans.kg <- tosum$Trans*1e-3*18.015*60*60/1000
+
+
+
+###--- The entire heatwvave 4-day period
+#- sum across chambers. Note that there are a few NA's, which will modestly affect the sums.
+tosum.c <- summaryBy(Photo.g+Trans.kg~chamber+HWtrt,data=tosum,FUN=sum,keep.names=T,na.rm=T)
+boxplot(Photo.g~HWtrt,data=tosum.c) # reduction with heatwave
+boxplot(Trans.kg~HWtrt,data=tosum.c) # no change
+
+#- calculate mean and SE of chamber sums, make grouped bar chart
+sums.m <- summaryBy(Photo.g+Trans.kg~HWtrt,data=tosum.c,FUN=c(mean,se))
+
+
+#- pull out the means to plot
+Cdat <- sums.m[1,]
+HW_dat <- sums.m[2,]
 
 
 #-----------------------------------------------------------------------------------------------------------
@@ -146,8 +169,8 @@ wtc.m2 <- summaryBy(.~DateTime_hr+combotrt,data=subset(wtc.m,as.Date(DateTime_hr
 # #- ALTERNATE VERSION WITH TWO TREATMENTS
 # 
 wtc.m2.two <- summaryBy(.~DateTime_hr+HWtrt,
-                       data=subset(wtc.m,as.Date(DateTime_hr) <= as.Date("2016-11-6") & as.Date(DateTime_hr) >= as.Date("2016-10-30")),FUN=c(mean,se))
-
+                       #data=subset(wtc.m,as.Date(DateTime_hr) <= as.Date("2016-11-6") & as.Date(DateTime_hr) >= as.Date("2016-10-30")),FUN=c(mean,se))
+                       data=subset(wtc.m,as.Date(DateTime_hr) <= as.Date("2016-11-4") & as.Date(DateTime_hr) >= as.Date("2016-10-30")),FUN=c(mean,se))
 
 
 #-----------------------------------------------------------------------------------------------------------
@@ -159,7 +182,7 @@ wtc.m2.two <- summaryBy(.~DateTime_hr+HWtrt,
 windows(80,70)
 par(mar=c(2,2,1,2),oma=c(4,5,2,4),cex.lab=1.6,las=1,cex.axis=1.2)
 layout(matrix(c(1,2,3,4,5,6), 3, 2, byrow = TRUE), 
-       widths=c(5,1), heights=c(1,3,3))
+       widths=c(5,1), heights=c(2,3,3))
 
 palette(c("#00A2FF", "#F5690C", "#1C41D6", "#FF0A0A")) #shades of blue and red
 
@@ -175,7 +198,7 @@ adderrorbars(x=wtc.m2.two$DateTime_hr,y=wtc.m2.two$Tair_al.mean,SE=wtc.m2.two$Ta
 dates <- as.POSIXct(c("2016-10-31 18:00","2016-11-4 16:00"),format="%Y-%m-%d %R")
 rect(xleft=dates[1],ybottom=-4,xright=dates[2],ytop=55,col="darkgrey",density=7) 
 #- add legend
-legend(x=starttime+212000,y=68,xpd=NA,lwd=3,col=c("blue","red"),ncol=4,cex=1.5,bty="n",
+legend(x=starttime+212000,y=59,xpd=NA,lwd=3,col=c("blue","red"),ncol=4,cex=1.5,bty="n",
        legend=c("Control","Heatwave"))
 legend("topright",legend=letters[1],cex=2,bty="n")
 
@@ -196,16 +219,30 @@ legend("topright",legend=letters[2],cex=2,bty="n")
 
 
 #-- plot photo bars
-toplot.HW <- cbind(toplot2[,1],toplot3[,1],toplot2[,2],toplot3[,2])
+# toplot.HW <- cbind(toplot2[,1],toplot3[,1],toplot2[,2],toplot3[,2])
+# 
+# xvals <- barplot(toplot2[,1], beside=T, ylab="", names.arg=rep("",4),yaxt="n",space=0,
+#                  cex.names=1.5, las=1, ylim=c(0,16), col=palette()[1:4])#col=brewer.pal(6,"Set1")[3:6])
+# adderrorbars(x=xvals[,1],y=toplot.all3[,1],SE=sums.HW$Photo.g.se,
+#              direction="updown",col="black",barlen=0.05,lwd=0.5)
+# axis(4)
+# legend(x=0.8,y=16,legend=letters[4],cex=2,bty="n")
+# title(ylab=expression(Total~A[canopy]~(g~m^-2)),outer=T,line=-60,cex.lab=1.8,xpd=NA,adj=0.7) # y-axis label
+# text(x=xvals[,1]+0.3,y=-0.8,labels=c("A:C","A:HW","W:C","W:HW"),xpd=T,srt=90,pos=2,cex=1.4,xpd=NA)
 
-xvals <- barplot(toplot2[,1], beside=T, ylab="", names.arg=rep("",4),yaxt="n",space=0,
-                 cex.names=1.5, las=1, ylim=c(0,16), col=palette()[1:4])#col=brewer.pal(6,"Set1")[3:6])
-adderrorbars(x=xvals[,1],y=toplot.all3[,1],SE=sums.HW$Photo.g.se,
-             direction="updown",col="black",barlen=0.05,lwd=0.5)
+#- two treatmetns only
+toplot.HW <- cbind(Cdat[,2],HW_dat[,2])
+ 
+xvals <- barplot(toplot.HW[1:2], beside=T, ylab="", names.arg=rep("",2),yaxt="n",space=0,
+                  cex.names=1.5, las=1, ylim=c(0,16), col=c("blue","red"))#col=brewer.pal(6,"Set1")[3:6])
+adderrorbars(x=xvals[,1],y=toplot.HW[1:2],SE=sums.m$Photo.g.se,
+              direction="updown",col="black",barlen=0.05,lwd=0.5)
 axis(4)
-legend(x=0.8,y=16,legend=letters[4],cex=2,bty="n")
-title(ylab=expression(Total~A[canopy]~(g~m^-2)),outer=T,line=-60,cex.lab=1.8,xpd=NA,adj=0.7) # y-axis label
-text(x=xvals[,1]+0.3,y=-0.8,labels=c("A:C","A:HW","W:C","W:HW"),xpd=T,srt=90,pos=2,cex=1.4,xpd=NA)
+#legend(x=0.4,y=16,legend=letters[4],cex=2,bty="n")
+title(ylab=expression(Total~A[canopy]~(g~m^-2)),outer=T,line=-60,cex.lab=1.8,xpd=NA,adj=0.6) # y-axis label
+text(x=xvals[,1]+0.3,y=-0.8,labels=c("C","HW"),xpd=T,srt=90,pos=2,cex=1.5,xpd=NA,cex.lab=1.1)
+legend(x=0.4,y=16,legend=letters[4],cex=2,bty="n")
+
 
 #---
 #- plot transpiration timecourse
@@ -220,18 +257,32 @@ plotBy(Trans.mean~DateTime_hr|HWtrt,data=wtc.m2.two,legend=F,type="l",lty=1,lwd=
 legend("topright",legend=letters[3],cex=2,bty="n")
 
 #-- plot transpiration bars
-xvals <- barplot(toplot2[,2], beside=T, ylab="", names.arg=rep("",4),yaxt="n",space=0,
-                 cex.names=1.5, las=1, ylim=c(0,10), col=palette()[1:4])#col=brewer.pal(6,"Set1")[3:6])
-adderrorbars(x=xvals[,1],y=toplot2[,2],SE=sums.HW$Trans.kg.se,
+# xvals <- barplot(toplot2[,2], beside=T, ylab="", names.arg=rep("",4),yaxt="n",space=0,
+#                  cex.names=1.5, las=1, ylim=c(0,10), col=palette()[1:4])#col=brewer.pal(6,"Set1")[3:6])
+# adderrorbars(x=xvals[,1],y=toplot2[,2],SE=sums.HW$Trans.kg.se,
+#              direction="updown",col="black",barlen=0.05,lwd=0.5)
+# axis(4)
+# legend(x=0.8,y=9,legend=letters[5],cex=2,bty="n")
+# title(ylab=expression(Total~E[canopy]~(kg~m^-2)),outer=T,line=-60,cex.lab=1.8,xpd=NA,adj=0.1) # y-axis label
+# text(x=xvals[,1]+0.3,y=-0.5,labels=c("A:C","A:HW","W:C","W:HW"),xpd=T,srt=90,pos=2,cex=1.4,xpd=NA)
+
+
+#- two treatmetns only
+toplot.HW <- cbind(Cdat[,3],HW_dat[,3])
+
+xvals <- barplot(toplot.HW[1:2], beside=T, ylab="", names.arg=rep("",2),yaxt="n",space=0,
+                 cex.names=1.5, las=1, ylim=c(0,7), col=c("blue","red"))#col=brewer.pal(6,"Set1")[3:6])
+adderrorbars(x=xvals[,1],y=toplot.HW[1:2],SE=sums.m$Trans.kg.se,
              direction="updown",col="black",barlen=0.05,lwd=0.5)
 axis(4)
-legend(x=0.8,y=9,legend=letters[5],cex=2,bty="n")
+legend(x=0.4,y=7.5,legend=letters[5],cex=2,bty="n")
 title(ylab=expression(Total~E[canopy]~(kg~m^-2)),outer=T,line=-60,cex.lab=1.8,xpd=NA,adj=0.1) # y-axis label
-text(x=xvals[,1]+0.3,y=-0.5,labels=c("A:C","A:HW","W:C","W:HW"),xpd=T,srt=90,pos=2,cex=1.4,xpd=NA)
+text(x=xvals[,1]+0.3,y=-0.8,labels=c("C","HW"),xpd=T,srt=90,pos=2,cex=1.5,xpd=NA)
+
 
 #-- add left y-axis titles
-title(ylab=expression(T[air]~(degree*C)),outer=T,adj=0.97,line=1)
-title(ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)),outer=T,adj=0.7,line=1)
+title(ylab=expression(T[air]~(degree*C)),outer=T,adj=0.92,line=1)
+title(ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)),outer=T,adj=0.65,line=1)
 title(ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)),outer=T,adj=0.1,line=1)
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
