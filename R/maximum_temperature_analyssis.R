@@ -164,3 +164,81 @@ datemax <- as.Date("2013-01-30")
 plot(maxT~Date,data=subset(dat,Date>datemin & Date < datemax),type="o",ylim=c(20,45))
 
 #-----------------------------------------------------------------------------------------------------------
+
+
+
+
+
+#-----------------------------------------------------------------------------------------------------------
+#- identify the events with >3 days of Tmax >90th percentile for each DOY
+
+#- put the 90th quantile in with the daily observations (dat)
+dat2 <- merge(dat,dat.q[,c("Date_fac","q90")],by="Date_fac")
+dat2$hot <- ifelse(dat2$maxT>dat2$q90,1,0)
+dat2 <- dat2[with(dat2,order(Date)),]
+
+library(dplyr)
+library(RcppRoll)
+
+#- calculate the 5-day rolling sum of flag data
+out2 <- dplyr::mutate(dat2, roll_sum(dat2$hot, 3, fill=0))
+names(out2)[6] <- "nmax_flag"
+
+#- subset to data that would be included in the precip record
+out3 <- subset(out2,Date<=as.Date("2015-02-28"))
+
+#- how many extreme events?
+length(which(out3$nmax_flag==3))
+
+#- dates with 3 or more consecutive hot days
+hotdates <- out3$Date[which(out3$nmax_flag==3)]
+#-----------------------------------------------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------------------------------------------
+#- read in the precip record
+precip <- read.csv("Data/BOM_precip_RAAF.csv")
+precip$Date <- paste(precip$Year,precip$Month,precip$Day,sep=" ")
+precip$Date <- as.Date(precip$Date,format="%Y %m %d")
+names(precip)[5] <- "Rain_mm"
+#-----------------------------------------------------------------------------------------------------------
+
+
+
+
+#-----------------------------------------------------------------------------------------------------------
+#- loop over the hot dates, find associated precip events, and sum them
+precipsums <- c()
+for (i in 1:length(hotdates)){
+  focaldate <- hotdates[i]
+  
+  #- establish a vector of dates preceding and including the hot date
+  searchdates <- seq(focaldate-14,focaldate,by=1)
+  
+  #- find matching precip records, sum them
+  precipevents <- which(precip$Date %in% searchdates)
+  precipsums[i] <- sum(precip$Rain_mm[precipevents],na.rm=T)
+  
+}
+#-----------------------------------------------------------------------------------------------------------
+
+
+
+
+#-----------------------------------------------------------------------------------------------------------
+#- look at results
+windows()
+par(mar=c(6,6,2,1))
+hist(precipsums,breaks=30,xlab="Precip in 14 prior days (mm)",cex.lab=2,
+     main="Events, 3 days > 90th percentile for Tmax")
+
+
+#- 82% of heatwaves took place with less than 30mm rain in the preceding 14 days
+length(which(precipsums<30))/length(precipsums)
+
+#- 44% of heatwaves took place with less than 5mm rain in the preceding 14 days
+length(which(precipsums<5))/length(precipsums)
+
+#- 10% of heatwaves took place with zero rain in the preceding 14 days
+length(which(precipsums==0))/length(precipsums)
+#-----------------------------------------------------------------------------------------------------------
