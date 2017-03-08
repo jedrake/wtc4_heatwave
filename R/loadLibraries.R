@@ -1,12 +1,3 @@
-# do this once
-# devtools::install_bitbucket("remkoduursma/plotby")
-library(plotBy)
-
-#- load HIEv, load token
-r <- require(HIEv)
-if(!r)stop("Install the HIEv R package from bitbucket.org/remkoduursma/hiev")
-setToken(tokenfile="HIEv_token.txt")
-
 Library <- function(pkg, ...){
   
   PACK <- .packages(all.available=TRUE)
@@ -20,7 +11,7 @@ Library <- function(pkg, ...){
   }
   
 }
-
+Library(stringi)
 Library(doBy)
 Library(magicaxis)
 Library(calibrate)
@@ -30,11 +21,25 @@ Library(RColorBrewer)
 Library(scales)
 Library(colorRamps)
 Library(RODBC)
+Library(magrittr)
 Library(lubridate)
 Library(dplyr)
 Library(car)
 Library(nlme)
 Library(phia)
+Library(gplots)
+Library(sp)
+
+# do this once
+#devtools::install_bitbucket("remkoduursma/plotby")
+library(plotBy)
+
+#- load HIEv, load token
+r <- require(HIEv)
+if(!r)stop("Install the HIEv R package from bitbucket.org/remkoduursma/hiev")
+#devtools::install_bitbucket("remkoduursma/hiev")
+setToken(tokenfile="HIEv_token.txt")
+
 
 #- standard error of the mean
 se <- function(dat,na.rm=F,...){
