@@ -8,7 +8,6 @@ source("R/loadLibraries.R")
 
 
 
-
 #----------------------------------------------------------------------------------------------------------
 #-- read in the midday leaf water potential data, average across treatments and dates
 lwp1 <- read.csv("Data/Hydraulics/WTC_TEMP_CM_PARRA_WATERPOTENTIAL-MIDDAY-HEATWAVE_20161019-20161107_L0.csv")
@@ -19,6 +18,8 @@ lwp.m <- summaryBy(LWP~T_treatment+HW_treatment+Date,data=lwp,FUN=c(mean,se)) # 
 lwp.m.amb <- subset(lwp.m,T_treatment=="ambient")
 lwp.m.ele <- subset(lwp.m,T_treatment=="elevated")
 #----------------------------------------------------------------------------------------------------------
+
+
 
 
 #----------------------------------------------------------------------------------------------------------
@@ -53,7 +54,7 @@ windows(35,15)
 par(mfrow=c(1,2),mar=c(6,7,2,1),cex.axis=1.5)
 symbols <- c(1,16)
 ptsize <- 2
-palette(c("blue","black","orange","red")
+palette(c("blue","black","orange","red"))
         
 #----
 #-- plot the ambient treatment
