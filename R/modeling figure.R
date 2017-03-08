@@ -196,10 +196,10 @@ title(ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)),outer=T,cex.lab=1.5,lin
 #  But try and do a DENSITY plot this time.
 
 windows(80,70)
-par(mar=c(2,2,1,2),oma=c(4,5,2,4),cex.lab=1.6,las=1,cex.axis=1.2)
+par(mar=c(0,0,0,0),oma=c(6,6,3,5),cex.lab=1.6,las=1,cex.axis=1.2)
 layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE), 
        widths=c(2,2), heights=c(2,2))
-ptsize=0.2
+ptsize=0.3
 PARlimit=600
 
 #- extract the control data above the PARlimit
@@ -219,32 +219,37 @@ reds.ramp <- colorRampPalette(brewer.pal(9,"Reds")[-1],alpha=0.7)
 
 #- plot Photosynthesis vs. Tleaf. 
 dc <- densCols(testhigh$Photo,testhigh$TargTempC_Avg,colramp=blues.ramp)
-plot(testhigh$Photo~testhigh$TargTempC_Avg,col=dc,pch=16,cex=1,ylim=c(0,12),xlim=c(15,45))
+plot(testhigh$Photo~testhigh$TargTempC_Avg,col=dc,pch=16,cex=1,ylim=c(0,12),xlim=c(15,45),xaxt="n",yaxt="n")
 points(ALEAF~Tleaf,data=subset(pred1,PPFD>PARlimit),pch=3,cex=ptsize,ylim=c(0,12),xlim=c(15,45))
-
-legend("topright",c("Model","Control data","Heatwave data"),pch=c(3,16,16),col=c("black",dc[1],"red"),cex=1.2)
+axis(1,tck=0.025,labels=F);axis(2,tck=0.025,labels=T);axis(4,tck=0.025,labels=F)
+legend("topright",c("Model","Control data","Heatwave data"),pch=c(3,16,16),col=c("black",dc[1],"red"),cex=1.2,bg="white")
 legend("topleft",letters[1],bty="n")
 
 dc2 <- densCols(test.hwhigh$Photo,test.hwhigh$TargTempC_Avg,colramp=reds.ramp)
-plot(test.hwhigh$Photo~test.hwhigh$TargTempC_Avg,col=dc2,pch=16,cex=1,ylim=c(0,12),xlim=c(15,45))
+plot(test.hwhigh$Photo~test.hwhigh$TargTempC_Avg,col=dc2,pch=16,cex=1,ylim=c(0,12),xlim=c(15,45),xaxt="n",yaxt="n")
 points(ALEAF~Tleaf,data=subset(pred2,PPFD>PARlimit),pch=3,cex=ptsize)
 legend("topleft",letters[2],bty="n")
+axis(1,tck=0.025,labels=F);axis(2,tck=0.025,labels=F);axis(4,tck=0.025,labels=T)
 
 
 #- transiration
 dc3 <- densCols(testhigh$Trans,testhigh$TargTempC_Avg,colramp=blues.ramp)
-plot(testhigh$Trans~testhigh$TargTempC_Avg,col=dc3,pch=16,cex=1,ylim=c(0,4),xlim=c(15,45))
+plot(testhigh$Trans~testhigh$TargTempC_Avg,col=dc3,pch=16,cex=1,ylim=c(0,4),xlim=c(15,45),xaxt="n",yaxt="n")
 points(ELEAF~Tleaf,data=subset(pred1,PPFD>PARlimit & failed==F),pch=3,cex=ptsize)
 legend("topleft",letters[3],bty="n")
+axis(1,tck=0.025,labels=T);axis(2,tck=0.025,labels=T);axis(4,tck=0.025,labels=F)
+
 
 dc4 <- densCols(test.hwhigh$Trans,test.hwhigh$TargTempC_Avg,colramp=reds.ramp)
-plot(test.hwhigh$Trans~test.hwhigh$TargTempC_Avg,col=dc4,pch=16,cex=1,ylim=c(0,4),xlim=c(15,45))
+plot(test.hwhigh$Trans~test.hwhigh$TargTempC_Avg,col=dc4,pch=16,cex=1,ylim=c(0,4),xlim=c(15,45),xaxt="n",yaxt="n")
 points(ELEAF~Tleaf,data=subset(pred2,PPFD>PARlimit & failed==F),pch=3,cex=ptsize)
 legend("topleft",letters[4],bty="n")
+axis(1,tck=0.025,labels=T);axis(2,tck=0.025,labels=F);axis(4,tck=0.025,labels=T)
 
-title(xlab=expression(Leaf~temperature~(T[leaf]~degree*C)),outer=T,cex.lab=1.5,line=1.5)
-title(ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)),outer=T,cex.lab=1.5,line=1.5,adj=0.9)
-title(ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)),outer=T,cex.lab=1.5,line=1.5,adj=0.1)
+
+title(xlab=expression(Leaf~temperature~(T[leaf]~degree*C)),outer=T,cex.lab=2,line=4)
+title(ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)),outer=T,cex.lab=1.5,line=2.5,adj=0.9)
+title(ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)),outer=T,cex.lab=1.5,line=2.5,adj=0.1)
 
 #---------------------------------------------------------------------------
 #---------------------------------------------------------------------------
@@ -260,5 +265,9 @@ summary(lm.A)$r.squared #r2
 lm.E <- lm(test$Trans~pred1$ELEAF)
 summary(lm.E)$sigma #RMSE
 summary(lm.E)$r.squared #r2
+
+lm.leafT <- lm(test$TargTempC_Avg~pred1$Tleaf)
+summary(lm.leafT)$sigma #RMSE
+summary(lm.leafT)$r.squared #r2
 #---------------------------------------------------------------------------
 #---------------------------------------------------------------------------
