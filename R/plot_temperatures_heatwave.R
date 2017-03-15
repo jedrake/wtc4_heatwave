@@ -220,8 +220,13 @@ lines(pred1$Tleaf~pred1$Tair,lty=1,lwd=3,col="red")
 
 
 legend("bottomright",pch=c(1,1,NA,NA,NA),lty=c(NA,NA,3,1,1),lwd=c(NA,NA,3,3,3),
-       legend=c("Control","Heatwave","1:1","Fit","Prediction without latent cooling"),
+       legend=c("Control","Heatwave","1:1","Fit","Model prediction"),
        col=c("blue","red","black","black","red"),bty="n",cex=1.2)
+
+#- legend without 1:1
+#legend("bottomright",pch=c(1,1,NA,NA),lty=c(NA,NA,1,1),lwd=c(NA,NA,3,3),
+#       legend=c("Control","Heatwave","Fit","Prediction without latent cooling"),
+#       col=c("blue","red","black","black","red"),bty="n",cex=1.2)
 
 #-----------------------------------------------------------------------------------------------------------
 
@@ -261,21 +266,22 @@ amb_Temps <- c(subset(dat.hw,HWtrt=="C" & PPFD_Avg > 500 & hour >= 12 & hour <= 
 windows(30,50)
 par(mfrow=c(2,1),mar=c(2.5,0,0,0),oma=c(2,1,1,8),las=1,cex.lab=2)
 ylims=c(0,0.25)
-hist(amb_Temps,xlim=c(10,55),main="",freq=F,xlab="",yaxt="n",xaxs="i", yaxs="i",ylim=ylims);box()
+hist(amb_Temps,xlim=c(10,55),main="",freq=F,xlab="",yaxt="n",xaxs="i", yaxs="i",ylim=ylims,col="blue");box()
 legend("top","Control",bty="n")
 axis(4)
 legend("topleft",legend=letters[3],cex=1.4,bty="n")
+abline(v=48.5,lty=2,col="blue")
 
-abline(v=48.5,lty=2)
-hist(hw_Temps,xlim=c(10,55),main="",freq=F,xlab="",yaxt="n",xaxs="i",yaxs="i",ylim=ylims);box()
+hist(hw_Temps,xlim=c(10,55),main="",freq=F,xlab="",yaxt="n",xaxs="i",yaxs="i",ylim=ylims,col="red");box()
 title(xlab=expression(T[leaf]~(degree*C)),outer=T,xpd=NA,line=0.7)
-abline(v=51.5,lty=2)
+abline(v=48.5,lty=2,col="blue")
+abline(v=51.5,lty=2,col="red")
 legend("top","Heatwave",bty="n")
 axis(4)
 legend("topleft",legend=letters[4],cex=1.4,bty="n")
 
 #title(xlab=expression(T[leaf]~(degree*C)),outer=T,cex.lab=1.5,line=0.5)
-title(ylab=expression(Density~of~T[leaf]),outer=T,cex.lab=2,line=-17)
+title(ylab=expression(Density~of~T[leaf]),outer=T,cex.lab=2,line=-19)
 
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
@@ -535,13 +541,13 @@ rect(xleft=dates[1]+0.5,ybottom=40,xright=dates[2]+0.5,ytop=55,col="darkgrey",de
 
 adderrorbars(x=thermo.m2$Date,y=thermo.m2$T50_mean.mean,SE=thermo.m2$T50_mean.se,
              direction="updown",col=thermo.m2$HW_treatment,barlen=0.05)
-legend("bottomleft",xpd=NA,pch=16,col=palette()[1:2],ncol=1,cex=1.2,
+legend("topright",xpd=NA,pch=16,col=palette()[1:2],ncol=1,cex=1.2,
        legend=c("Control","Heatwave"))
 plotBy(T50_mean.mean~Date|HW_treatment,data=thermo.m2,type="o",pch=16,ylim=c(47,52),cex=1.5,legend=F,add=T,
        ylab=expression(Leaf~thermotolerance~(T[50]*";"~degree*C)))
-legend("bottomright",legend=letters[1],cex=1.4,bty="n")
-text(x=thermo.m2$Date[1]+5,y=52,"Pre-heatwave",cex=1.2)
-text(x=thermo.m2$Date[1]+23,y=52,"Post-heatwave",cex=1.2)
+legend("topleft",legend=letters[1],cex=1.4,bty="n")
+text(x=thermo.m2$Date[1]+5,y=47,"Pre-heatwave",cex=1.2)
+text(x=thermo.m2$Date[1]+23,y=47,"Post-heatwave",cex=1.2)
 
 
 #---
