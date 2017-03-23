@@ -7,100 +7,111 @@
 source("R/loadLibraries.R")
 
 
-
-#-----------------------------------------------------------------------------------------------------------
-#- download the leaf temperature data from HIEv (i.e., the actual thermocouples!)
-files <- searchHIEv("WTC_AUTO_C[0-9]{2}_LEAFTEMPS")
-d <- downloadTOA5("WTC_AUTO_C[0-9]{2}_LEAFTEMPS", startDate="2016-10-10", endDate="2016-11-30",
-                  topath="C:/Repos/wtc4_flux/data/fromHIEv",
-                  cachefile="C:/Repos/wtc4_flux/data/fromHIEv/wtc4cache_Tleaf.rdata")
-d$chamber <- as.factor(substr(d$Source,start=10,stop=12)) # extract the chamber number from the filename
-d$T_treatment <- ifelse(as.numeric(substr(as.character(d$chamber),start=2,stop=3)) %% 2 == 0, "elevated","ambient")
-d$DateTime_hr <- nearestTimeStep(d$DateTime, nminutes = 15, align = "floor")
-
-#-----------------------------------------------------------------------------------------------------------
-
-
-
-
-#-----------------------------------------------------------------------------------------------------------
-#- download the AIRVARS data (PPFD and IR-T data), do some manipulation
-files <- searchHIEv("WTC_AUTO_C[0-9]{2}_AIRVARS")
-IRT <- downloadTOA5("WTC_AUTO_C[0-9]{2}_AIRVARS", startDate="2016-10-10", endDate="2016-11-30",
-                    topath="C:/Repos/wtc4_flux/data/fromHIEv",
-                    cachefile="C:/Repos/wtc4_flux/data/fromHIEv/wtc4cache.rdata")
-IRT$chamber <- as.factor(substr(IRT$Source,start=10,stop=12)) # extract the chamber number from the filename
-IRT$T_treatment <- ifelse(as.numeric(substr(as.character(IRT$chamber),start=2,stop=3)) %% 2 == 0, "elevated","ambient")
-IRT$Tdiff <- with(IRT,TargTempC_Avg-SBTempC_Avg)
-IRT$DateTime_hr <- nearestTimeStep(IRT$DateTime, nminutes = 15, align = "floor")
-#-----------------------------------------------------------------------------------------------------------
-
-
-
-#-----------------------------------------------------------------------------------------------------------
-#- load the trendlogs
-source("C:/Repos/wtc4_flux_processing/R/getWTCtrendlog.R")
-load("C:/Repos/wtc4_flux_processing/data/TrendlogChDF.RData")
-load("C:/Repos/wtc4_flux_processing/data/TrendlogRefDF.RData")
-Trend.dat <- subset(TrendlogChDF,as.Date(DateTime)>=as.Date("2016-10-10"))
-Trend.dat$DateTime_hr <- nearestTimeStep(Trend.dat$DateTime, nminutes = 15, align = "floor")
-
-
-#-----------------------------------------------------------------------------------------------------------
-
-
-
+# 
+# #-----------------------------------------------------------------------------------------------------------
+# #- download the leaf temperature data from HIEv (i.e., the actual thermocouples!)
+# files <- searchHIEv("WTC_AUTO_C[0-9]{2}_LEAFTEMPS")
+# d <- downloadTOA5("WTC_AUTO_C[0-9]{2}_LEAFTEMPS", startDate="2016-10-10", endDate="2016-11-30",
+#                   topath="C:/Repos/wtc4_flux/data/fromHIEv",
+#                   cachefile="C:/Repos/wtc4_flux/data/fromHIEv/wtc4cache_Tleaf.rdata")
+# d$chamber <- as.factor(substr(d$Source,start=10,stop=12)) # extract the chamber number from the filename
+# d$T_treatment <- ifelse(as.numeric(substr(as.character(d$chamber),start=2,stop=3)) %% 2 == 0, "elevated","ambient")
+# d$DateTime_hr <- nearestTimeStep(d$DateTime, nminutes = 15, align = "floor")
+# 
+# #-----------------------------------------------------------------------------------------------------------
+# 
+# 
+# 
+# 
+# #-----------------------------------------------------------------------------------------------------------
+# #- download the AIRVARS data (PPFD and IR-T data), do some manipulation
+# files <- searchHIEv("WTC_AUTO_C[0-9]{2}_AIRVARS")
+# IRT <- downloadTOA5("WTC_AUTO_C[0-9]{2}_AIRVARS", startDate="2016-10-10", endDate="2016-11-30",
+#                     topath="C:/Repos/wtc4_flux/data/fromHIEv",
+#                     cachefile="C:/Repos/wtc4_flux/data/fromHIEv/wtc4cache.rdata")
+# IRT$chamber <- as.factor(substr(IRT$Source,start=10,stop=12)) # extract the chamber number from the filename
+# IRT$T_treatment <- ifelse(as.numeric(substr(as.character(IRT$chamber),start=2,stop=3)) %% 2 == 0, "elevated","ambient")
+# IRT$Tdiff <- with(IRT,TargTempC_Avg-SBTempC_Avg)
+# IRT$DateTime_hr <- nearestTimeStep(IRT$DateTime, nminutes = 15, align = "floor")
+# #-----------------------------------------------------------------------------------------------------------
+# 
+# 
+# 
+# #-----------------------------------------------------------------------------------------------------------
+# #- load the trendlogs
+# source("C:/Repos/wtc4_flux_processing/R/getWTCtrendlog.R")
+# load("C:/Repos/wtc4_flux_processing/data/TrendlogChDF.RData")
+# load("C:/Repos/wtc4_flux_processing/data/TrendlogRefDF.RData")
+# Trend.dat <- subset(TrendlogChDF,as.Date(DateTime)>=as.Date("2016-10-10"))
+# Trend.dat$DateTime_hr <- nearestTimeStep(Trend.dat$DateTime, nminutes = 15, align = "floor")
+# 
+# 
+# #-----------------------------------------------------------------------------------------------------------
+# 
+# 
+# 
 
 #-----------------------------------------------------------------------------------------------------------
 #- merge the datasets
-d.dat <- d[,c("chamber","T_treatment","DateTime_hr","LeafT_Avg.1.","LeafT_Avg.2.")]
-d.dat.m <- data.frame(dplyr::summarize(dplyr::group_by(d.dat, DateTime_hr, chamber,T_treatment), 
-                                       LeafT_Avg.1.=mean(LeafT_Avg.1.,na.rm=T),
-                                       LeafT_Avg.2.=mean(LeafT_Avg.2.,na.rm=T)))
+# d.dat <- d[,c("chamber","T_treatment","DateTime_hr","LeafT_Avg.1.","LeafT_Avg.2.")]
+# d.dat.m <- data.frame(dplyr::summarize(dplyr::group_by(d.dat, DateTime_hr, chamber,T_treatment),
+#                                        LeafT_Avg.1.=mean(LeafT_Avg.1.,na.rm=T),
+#                                        LeafT_Avg.2.=mean(LeafT_Avg.2.,na.rm=T)))
+# 
+# 
+# IRT.dat <- IRT[,c("chamber","DateTime_hr","PPFD_Avg","TargTempC_Avg")]
+# IRT.dat.m <- data.frame(dplyr::summarize(dplyr::group_by(IRT.dat, DateTime_hr, chamber),
+#                                         TargTempC_Avg=mean(TargTempC_Avg,na.rm=T),
+#                                         PPFD_Avg=mean(PPFD_Avg,na.rm=T)))
+# 
+# 
+# Trend.dat <- Trend.dat[,c("chamber","DateTime_hr","Tair_al","RH_al")]
+# Trend.dat.m <- data.frame(dplyr::summarize(dplyr::group_by(Trend.dat, DateTime_hr, chamber),
+#                                            Tair_al =mean(Tair_al ,na.rm=T),
+#                                            RH_al=mean(RH_al,na.rm=T)))
+# Trend.dat.m$VPD <- RHtoVPD(RH=Trend.dat.m$RH_al,TdegC=Trend.dat.m$Tair_al)
+# Trend.dat.m$chamber <- factor(Trend.dat.m$chamber)
+# 
+# dat2 <- merge(d.dat.m,IRT.dat.m,by=c("chamber","DateTime_hr"),all.y=T)
+# 
+# 
+# dat.raw <- merge(dat2,Trend.dat.m,by=c("chamber","DateTime_hr"),all.y=T)
+# 
+# linkdf <- data.frame(chamber = levels(as.factor(dat.raw$chamber)),
+#                      HWtrt = c("C","C","HW","HW","C","C","HW","C","HW","HW","C","HW"))#swapped C12 and C08
+# dat.raw2 <- merge(dat.raw,linkdf,by="chamber")
+# dat.raw2$combotrt <- factor(paste(dat.raw2$T_treatment,dat.raw2$HWtrt,sep="_"))
+# dat.raw2$Tleaf <- rowMeans(dat.raw2[,c("LeafT_Avg.1.","LeafT_Avg.2.")],na.rm=T)
+# 
+# dat.raw2$Tleafmean <- rowMeans(dat.raw2[,c("Tleaf","TargTempC_Avg")])
+# 
+# #- write out a csv to share via HIEv.
+# dat_out <- dat.raw2[,c(1,2,3,11,4:10,13)]
+# names(dat_out)[4] <- "HW_Treatment"
+# names(dat_out)[2] <- "DateTime"
+# write.csv(dat_out,"Output/WTC-TEMP_PARRA-CM-TEMPERATURES_COMBINED-20161010-20161123_L1.csv",row.names=F)
 
+#- read in the file of combined temperatures from HIEv.
+dat.raw2 <- data.frame(data.table::fread("Data/fromHIEv/WTC-TEMP_PARRA-CM-TEMPERATURES_COMBINED-20161010-20161123_L1.csv"))
+dat.raw2$DateTime <- as.POSIXct(dat.raw2$DateTime,format="%Y-%m-%d %T",tz="GMT")
 
-IRT.dat <- IRT[,c("chamber","DateTime_hr","PPFD_Avg","TargTempC_Avg")]
-IRT.dat.m <- data.frame(dplyr::summarize(dplyr::group_by(IRT.dat, DateTime_hr, chamber), 
-                                        TargTempC_Avg=mean(TargTempC_Avg,na.rm=T),
-                                        PPFD_Avg=mean(PPFD_Avg,na.rm=T)))
-
-
-Trend.dat <- Trend.dat[,c("chamber","DateTime_hr","Tair_al","RH_al")]
-Trend.dat.m <- data.frame(dplyr::summarize(dplyr::group_by(Trend.dat, DateTime_hr, chamber), 
-                                           Tair_al =mean(Tair_al ,na.rm=T),
-                                           RH_al=mean(RH_al,na.rm=T)))
-Trend.dat.m$VPD <- RHtoVPD(RH=Trend.dat.m$RH_al,TdegC=Trend.dat.m$Tair_al)
-
-dat2 <- merge(d.dat.m,IRT.dat.m,by=c("chamber","DateTime_hr"))
-
-
-dat.raw <- merge(dat2,Trend.dat.m,by=c("chamber","DateTime_hr"))
-
-linkdf <- data.frame(chamber = levels(as.factor(dat.raw$chamber)),
-                     HWtrt = c("C","C","HW","HW","C","C","HW","C","HW","HW","C","HW"))#swapped C12 and C08
-dat.raw2 <- merge(dat.raw,linkdf,by="chamber")
-dat.raw2$combotrt <- factor(paste(dat.raw2$T_treatment,dat.raw2$HWtrt,sep="_"))
-dat.raw2$Tleaf <- rowMeans(dat.raw2[,c("LeafT_Avg.1.","LeafT_Avg.2.")],na.rm=T)
-
-dat.raw2$Tleafmean <- rowMeans(dat.raw2[,c("Tleaf","TargTempC_Avg")])
-
-dat <- subset(dat.raw2,as.Date(DateTime_hr)>=as.Date("2016-10-29") & as.Date(DateTime_hr)<=as.Date("2016-11-10"))
+dat <- subset(dat.raw2,as.Date(DateTime)>=as.Date("2016-10-29") & as.Date(DateTime)<=as.Date("2016-11-10"))
 
 #- Tleaf vs. Tair
 dat$Tdiff_IR <- with(dat,TargTempC_Avg-Tair_al)
 dat$Tdiff_TC <- with(dat,Tleaf-Tair_al)
 
 #- average across treatments for hourly averages
-dat.m$DateTime_hr <- nearestTimeStep(dat.m$DateTime_hr, nminutes = 60, align = "floor")
+dat.m$DateTime <- nearestTimeStep(dat.m$DateTime, nminutes = 60, align = "floor")
 
-dat.m <- summaryBy(.~DateTime_hr+T_treatment+HWtrt,data=dat,FUN=c(mean,se),keep.names=T)
+dat.m <- summaryBy(.~DateTime+T_treatment+HWtrt,data=dat,FUN=c(mean,se),keep.names=T)
 dat.m$combotrt <- factor(paste(dat.m$T_treatment,dat.m$HWtrt,sep="_"))
 
 
 
 #- just the heatwave data
-dat.hw <- subset(dat,as.Date(DateTime_hr)>=as.Date("2016-10-31") & as.Date(DateTime_hr)<=as.Date("2016-11-3"))
-dat.hw$Date <- as.Date(dat.hw$DateTime_hr)
+dat.hw <- subset(dat,as.Date(DateTime)>=as.Date("2016-10-31") & as.Date(DateTime)<=as.Date("2016-11-3"))
+dat.hw$Date <- as.Date(dat.hw$DateTime)
 #-----------------------------------------------------------------------------------------------------------
 
 
@@ -110,12 +121,16 @@ dat.hw$Date <- as.Date(dat.hw$DateTime_hr)
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 #- What were the mean (min/max) temperatures in the experiment? Read in the full flux data
-flux <- read.csv("C:/Repos/wtc4_flux_processing/output/WTC_TEMP-PARRA_WTCFLUX_20160228-20161030_L0.csv")
+flux <- data.frame(data.table::fread("C:/Repos/wtc4_flux_processing/output/WTC_TEMP-PARRA_WTCFLUX_20160228-20161030_L0.csv"))
 flux$DateTime <- as.POSIXct(flux$DateTime,format="%Y-%m-%d %T",tz="GMT")
 plot(Tair_al~DateTime,data=subset(flux,T_treatment=="ambient"))
 
 #- remove very cold outlier
 flux$Tair_al[which(flux$Tair_al < -15)] <- NA
+
+#- remove very hot outlier
+flux$Tair_al[which(flux$Tair_al > 60)] <- NA
+
 summaryBy(Tair_al~T_treatment,data=flux,FUN=c(mean,min,max),na.rm=T)
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
@@ -165,23 +180,25 @@ summaryBy(Tair_al~T_treatment,data=flux,FUN=c(mean,min,max),na.rm=T)
 #- read in the flux data, calculate what leaf temperatures SHOULD have been, to add to plot of Tleaf vs. Tair
 dat <- read.csv("Data/WTC_TEMP-PARRA_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv")
 dat$DateTime_hr <- as.POSIXct(dat$DateTime_hr,format="%Y-%m-%d %T",tz="GMT")
+names(dat)[4] <- "HW_Treatment"
+
 #- aggregate to hourly averages
 dat$DateTime_hr <- nearestTimeStep(dat$DateTime_hr,nminutes=60,"floor")
-dat.hr <- summaryBy(.~DateTime_hr+chamber+T_treatment+HWtrt+combotrt,FUN=mean,keep.names=T,data=dat)
+dat.hr <- summaryBy(.~DateTime_hr+chamber+T_treatment+HW_Treatment+combotrt,FUN=mean,keep.names=T,data=dat)
 
 #- subset to just the heatwave timeperiods
 starttime <- as.POSIXct("2016-10-31 00:00:00",format="%Y-%m-%d %T",tz="GMT")
 endtime <- as.POSIXct("2016-11-04 20:00:00",format="%Y-%m-%d %T",tz="GMT")
 
-dat <- subset(dat.hr,HWtrt=="HW" & DateTime_hr>starttime & DateTime_hr < endtime & Tair_al>20)
+dat <- subset(dat.hr,HW_Treatment=="HW" & DateTime_hr>starttime & DateTime_hr < endtime & Tair_al>15)
 test <- subset(dat,PPFD_Avg >500)
-g0 <- 0.001
+g0 <- 0.003
 #- model the predicted leaf temperatures. include an extra point at max air temperature
 pred1 <- suppressMessages(PhotosynEB(Tair=c(test$Tair_al,44.6),VPD=c(test$VPD,5.77),Wind=8,Wleaf=0.01,StomatalRatio=1,
-                                     LeafAbs=0.86,
-                                     PPFD=c(test$PPFD_Avg,1800),g1=3,g0=g0,
-                                     Vcmax=35,EaV=51780,EdVC=2e5,delsC=639,
-                                     Jmax = 55,EaJ=21640,EdVJ=2e5,delsJ=633))
+                                     LeafAbs=0.95,
+                                     PPFD=c(test$PPFD_Avg,1800),g1=1.9,g0=g0,
+                                     Vcmax=34,EaV=51780,EdVC=2e5,delsC=640,
+                                     Jmax = 60,EaJ=21640,EdVJ=2e5,delsJ=633))
 plot(pred1$Tleaf~pred1$Tair)
 abline(0,1)
 #-----------------------------------------------------------------------------------------------------------
@@ -197,7 +214,7 @@ windows(60,60)
 par(mfrow=c(1,1),mar=c(6,6,1,1),oma=c(0,0,1,0),cex.lab=2)
 xlims=c(10,50)
 palette(c("blue","red"))
-plotBy(TargTempC_Avg~Tair_al|HWtrt,data=subset(dat.hw,PPFD_Avg>=500 & DateTime_hr > starttime & DateTime_hr < endtime),
+plotBy(TargTempC_Avg~Tair_al|HW_Treatment,data=subset(dat.hw,PPFD_Avg>=500 & DateTime > starttime & DateTime < endtime),
        legend=F,las=1,xlim=xlims,ylim=xlims,pch=1,
        xlab=expression(T[air]~(degree*C)),
        ylab=expression(T[leaf]~(degree*C)))
@@ -237,11 +254,66 @@ legend("bottomright",pch=c(1,1,NA,NA,NA),lty=c(NA,NA,3,1,1),lwd=c(NA,NA,3,3,3),
 
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
+#- Try an alternative density plot version of the Tleaf vs. Tair figure
+library(geneplotter); library(RColorBrewer)
+blues.ramp <- colorRampPalette(brewer.pal(9,"Blues")[-1],alpha=0.7)
+reds.ramp <- colorRampPalette(brewer.pal(9,"Reds")[-1],alpha=0.7)
+ptsize <- 1.2
+
+#- extract a subset of the dat
+Tleaf.c <- subset(dat.hw,HW_Treatment=="C" & PPFD_Avg>=500 & DateTime > starttime & DateTime < endtime)
+Tleaf.hw <- subset(dat.hw,HW_Treatment=="HW" &PPFD_Avg>=500 & DateTime > starttime & DateTime < endtime)
+
+#- plot Tleaf vs. Tair. 
+dhw <- densCols(c(Tleaf.hw$TargTempC_Avg,Tleaf.hw$Tleaf),c(Tleaf.hw$Tair_al,Tleaf.hw$Tair_al),colramp=reds.ramp)
+plot(c(Tleaf.hw$TargTempC_Avg,Tleaf.hw$Tleaf)~c(Tleaf.hw$Tair_al,Tleaf.hw$Tair_al),col=dhw,pch=16,cex=ptsize,
+       ylim=c(10,50),xlim=c(10,45),xaxt="n",yaxt="n",
+     xlab=expression(T[air]~(degree*C)),ylab=expression(T[leaf]~(degree*C)))
+dc <- densCols(c(Tleaf.c$TargTempC_Avg,Tleaf.c$Tleaf),c(Tleaf.c$Tair_al,Tleaf.c$Tair_al),colramp=blues.ramp)
+
+points(c(Tleaf.c$TargTempC_Avg,Tleaf.c$Tleaf)~c(Tleaf.c$Tair_al,Tleaf.c$Tair_al),col=dc,pch=16,cex=ptsize,
+     ylim=c(10,55),xlim=c(10,55),xaxt="n",yaxt="n",
+     xlab=expression(T[air]~(degree*C)),ylab=expression(T[leaf]~(degree*C)))
+
+axis(1,tck=0.025,labels=T);axis(2,tck=0.025,labels=T,las=1);axis(4,tck=0.025,labels=F)
+
+
+abline(0,1,lty=3,lwd=3,col="darkgrey")
+lm1 <- lm(TargTempC_Avg~Tair_al+I(Tair_al^2),data=subset(dat.hw,PPFD_Avg>=500))
+legend("topleft",legend=letters[2],cex=1.4,bty="n")
+
+xvals <-seq(11,45,length.out=101)
+predictions <- predict.lm(lm1,newdata=data.frame(Tair_al = seq(11,45,length.out=101)),interval="prediction")
+lines(predictions[,1]~seq(11,45,length.out=101),col="black",lwd=2)
+lines(predictions[1:23,1]+0.1~xvals[1:23],col="red",lwd=2) 
+
+#lines(predictions[,2]~seq(11,45,length.out=101),col="black",lwd=1,lty=2)
+#lines(predictions[,3]~seq(11,45,length.out=101),col="black",lwd=1,lty=2)
+
+#- add the "predicted" Tleaf values in the absence of transpirational cooling
+lines(pred1$Tleaf~pred1$Tair,lty=1,lwd=2,col="red")
+
+
+legend("bottomright",pch=c(16,16,NA,NA,NA),lty=c(NA,NA,3,1,1),lwd=c(NA,NA,2,2,2),pt.cex=ptsize*1.5,
+       legend=c("Control","Heatwave","1:1","Fit","Model prediction"),
+       col=c(dc[1],dhw[1],"darkgrey","black","red"),bty="n",cex=1.2)
+
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
 #- calculate daily maximum Tleaf (IR) and Tair during the heatwave
 
 
 #- calculate daily maximums, sunlit periods only
-dat.hw.day <- summaryBy(TargTempC_Avg+Tair_al~chamber+HWtrt+Date,
+dat.hw.day <- summaryBy(TargTempC_Avg+Tair_al~chamber+HW_Treatment+Date,
                         data=subset(dat.hw,PPFD_Avg>10),FUN=max,keep.names=T)
 
 #- calculate mean maximums for each treatment
@@ -252,15 +324,15 @@ summaryBy(TargTempC_Avg+Tair_al~HWtrt,data=dat.hw.day,FUN=mean)
 #amb_Temps <- c(subset(dat.hw,HWtrt=="C" & PPFD_Avg > 1000)$LeafT_Avg.1.,subset(dat.hw,HWtrt=="C" & PPFD_Avg > 1000)$LeafT_Avg.2.)
 
 #- get teh hour of teh day
-dat.hw$hour <- hour(dat.hw$DateTime_hr)
+dat.hw$hour <- hour(dat.hw$DateTime)
 
 #- histogram of temperatures during the heatwave (IR)
-hw_Temps <- subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 1000 & hour >= 11 & hour <= 18)$TargTempC_Avg
-amb_Temps <- subset(dat.hw,HWtrt=="C" & PPFD_Avg > 1000 & hour >= 11 & hour <= 18)$TargTempC_Avg
+hw_Temps <- subset(dat.hw,HW_Treatment=="HW" & PPFD_Avg > 1000 & hour >= 11 & hour <= 18)$TargTempC_Avg
+amb_Temps <- subset(dat.hw,HW_Treatment=="C" & PPFD_Avg > 1000 & hour >= 11 & hour <= 18)$TargTempC_Avg
 
 #- histogram of temperatures during the heatwave (both IR and TC)
-hw_Temps <- c(subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 500 & hour >= 12 & hour <= 16)$TargTempC_Avg,subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 500 & hour >= 12 & hour <= 16)$LeafT_Avg.1.,subset(dat.hw,HWtrt=="HW" & PPFD_Avg > 500 & hour >= 12 & hour <= 16)$LeafT_Avg.2.)
-amb_Temps <- c(subset(dat.hw,HWtrt=="C" & PPFD_Avg > 500 & hour >= 12 & hour <= 16)$TargTempC_Avg,subset(dat.hw,HWtrt=="C" & PPFD_Avg > 500 & hour >= 12 & hour <= 16)$LeafT_Avg.1.,subset(dat.hw,HWtrt=="C" & PPFD_Avg > 500 & hour >= 12 & hour <= 16)$LeafT_Avg.2.)
+hw_Temps <- c(subset(dat.hw,HW_Treatment=="HW" & PPFD_Avg > 500 & hour >= 12 & hour <= 16)$TargTempC_Avg,subset(dat.hw,HW_Treatment=="HW" & PPFD_Avg > 500 & hour >= 12 & hour <= 16)$LeafT_Avg.1.,subset(dat.hw,HW_Treatment=="HW" & PPFD_Avg > 500 & hour >= 12 & hour <= 16)$LeafT_Avg.2.)
+amb_Temps <- c(subset(dat.hw,HW_Treatment=="C" & PPFD_Avg > 500 & hour >= 12 & hour <= 16)$TargTempC_Avg,subset(dat.hw,HW_Treatment=="C" & PPFD_Avg > 500 & hour >= 12 & hour <= 16)$LeafT_Avg.1.,subset(dat.hw,HW_Treatment=="C" & PPFD_Avg > 500 & hour >= 12 & hour <= 16)$LeafT_Avg.2.)
 
 
 windows(30,50)
