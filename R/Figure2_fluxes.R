@@ -9,7 +9,7 @@
 
 #-----------------------------------------------------------------------------------------------------------
 #- Read in and process the flux data associated with the heatwave.
-wtc <- read.csv("Data/fromHIEv/WTC_TEMP-PARRA_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv")
+wtc <- read.csv("Data/WTC_TEMP-PARRA_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv")
 wtc$DateTime <- as.POSIXct(wtc$DateTime_hr,format="%Y-%m-%d %T",tz="GMT")
 
 #-- create hourly values for subsequent averaging of fluxes
