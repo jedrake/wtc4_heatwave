@@ -41,6 +41,24 @@ if(!r)stop("Install the HIEv R package from bitbucket.org/remkoduursma/hiev")
 setToken(tokenfile="HIEv_token.txt")
 
 
+
+#- function to download data, either from HIEv or from published repository
+download_data <- function(){
+  
+  #- get the combined temperature dataset
+  downloadHIEv(hiev=searchHIEv("WTC-TEMP_PARRA-CM-TEMPERATURES_COMBINED-20161010-20161123_L1.csv"),topath="Data/fromHIEv")
+  
+  #- get the whole tree flux dataset.
+  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv"),topath="Data/fromHIEv")
+  
+  #- get hydraulics datasets
+  downloadHIEv(hiev=searchHIEv("WTC_TEMP_CM_PARRA_KLEAF-HEATWAVE_20161104_L0.csv"),topath="Data/fromHIEv")
+  downloadHIEv(hiev=searchHIEv("WTC_TEMP_CM_PARRA_NATIVE-EMBOLISM-HEATWAVE"),topath="Data/fromHIEv")
+  downloadHIEv(hiev=searchHIEv("WTC_TEMP_CM_PARRA_WATERPOTENTIAL-HEATWAVE"),topath="Data/fromHIEv")
+}
+
+
+
 #- standard error of the mean
 se <- function(dat,na.rm=F,...){
   if(na.rm==T){
@@ -54,24 +72,9 @@ se <- function(dat,na.rm=F,...){
 
 
 
-#' Adds error bars to a plot
-#' 
-#' @description Yet another function that adds error bars. The user must specify the length of the error bars.
-#' @param x The x coordinates of start of the error bar
-#' @param y The y coordinates of start of the error bar
-#' @param SE The length of the error bar
-#' @param direction One of 'up', 'down', 'right', 'left', 'updown' or 'rightleft'.
-#' @param barlen The length of the cross-bar at the end of the error bar.
-#' @param \ldots Additional parameters passed to \code{\link{arrows}}, such as the colour (\code{col}).
-#' #' @details Simple wrapper for \code{\link{arrows}}, where \code{angle=90} and \code{code=3}. The \code{barlen} argument corresponds to \code{length} in \code{arrows}.
-#' @examples
-#' # A simple example. Also note that we can specify the colour of the error bars, or other parameters
-#' # that arrows() recognizes.
-#' x <- rnorm(20)
-#' y <- x + rnorm(20)
-#' se <- runif(20, 0.2,0.4)
-#' plot(x,y,pch=21,bg="white",panel.first=adderrorbars(x,y,se,direction="updown", col="darkgrey"))
-#' @export
+
+
+# Adds error bars to a plot
 adderrorbars <- function(x,y,SE,direction,barlen=0.04,...){
   
   if(length(direction)>1)stop("direction must be of length one.")
