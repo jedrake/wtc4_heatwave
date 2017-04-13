@@ -1,3 +1,10 @@
+#- create data and output directories, if they do not exist
+if(!dir.exists("Data")) dir.create(file.path("Data"),showWarnings=F)
+if(!dir.exists("Output")) dir.create(file.path("Output"),showWarnings=F)
+
+
+
+#- load libraries
 Library <- function(pkg, ...){
   
   PACK <- .packages(all.available=TRUE)
@@ -42,19 +49,32 @@ setToken(tokenfile="HIEv_token.txt")
 
 
 
+#- install the geneplotter package to make density plots
+## try http:// if https:// URLs are not supported
+#source("https://bioconductor.org/biocLite.R")
+#biocLite("geneplotter")
+r <- require(geneplotter)
+if(!r)stop("Install the geneplotter package. See code in R/loadLibraries.R for details.")
+
+
+
 #- function to download data, either from HIEv or from published repository
 download_data <- function(){
   
   #- get the combined temperature dataset
-  downloadHIEv(hiev=searchHIEv("WTC-TEMP_PARRA-CM-TEMPERATURES_COMBINED-20161010-20161123_L1.csv"),topath="Data/fromHIEv")
+  downloadHIEv(hiev=searchHIEv("WTC-TEMP_PARRA-CM-TEMPERATURES_COMBINED-20161010-20161123_L1.csv"),topath="Data")
   
   #- get the whole tree flux dataset.
-  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv"),topath="Data/fromHIEv")
-  
+  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv"),topath="Data")
+
   #- get hydraulics datasets
-  downloadHIEv(hiev=searchHIEv("WTC_TEMP_CM_PARRA_KLEAF-HEATWAVE_20161104_L0.csv"),topath="Data/fromHIEv")
-  downloadHIEv(hiev=searchHIEv("WTC_TEMP_CM_PARRA_NATIVE-EMBOLISM-HEATWAVE"),topath="Data/fromHIEv")
-  downloadHIEv(hiev=searchHIEv("WTC_TEMP_CM_PARRA_WATERPOTENTIAL-HEATWAVE"),topath="Data/fromHIEv")
+  downloadHIEv(hiev=searchHIEv("WTC_TEMP_CM_PARRA_KLEAF-HEATWAVE_20161104_L0.csv"),topath="Data")
+  downloadHIEv(hiev=searchHIEv("WTC_TEMP_CM_PARRA_NATIVE-EMBOLISM-HEATWAVE"),topath="Data")
+  downloadHIEv(hiev=searchHIEv("WTC_TEMP_CM_PARRA_WATERPOTENTIAL-HEATWAVE"),topath="Data")
+  
+  #- get T50 data
+  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_T50-CI_20161019-20161117_L1.csv"),topath="Data")
+  
 }
 
 

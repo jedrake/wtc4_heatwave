@@ -11,12 +11,12 @@
 #- P R E P A R E
 #-----------------------------------------------------------------------------------------------------------
 
-#- Load libraries for analysis. This will install many libraries.
+#- Load libraries for analysis. This will install many libraries. Some non-standard libraries many need to
+#    be installed manually.
 source("R/loadLibraries.R")
 
 #- Download the data
 download_data()
-
 #-----------------------------------------------------------------------------------------------------------
 
 
@@ -46,4 +46,21 @@ source("R/Figure2_fluxes.R")
 #- Run the script to process and plot the T50 and temperature data (Fig. 3)
 #    creates several pdfs in "Output" named Figure3-X.pdf .
 source("R/Figure3_T50_temperatures.R")
+#-----------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+#-----------------------------------------------------------------------------------------------------------
+#- F I G U R E   4
+#-----------------------------------------------------------------------------------------------------------
+
+#- Run the script to do the model evaluation (Figure 4). This takes a few minutes.
+#    This generates many error messages where the leaf energy balance had two solutions.
+#    For this purpose, these errors can be safely ignored.
+#    To generate the supplemental plots for the Leuning and Ball-Berry models, uncomment code
+#      at the end of the Figure4-model.R script.
+source("R/Figure4_modeling.R")
 #-----------------------------------------------------------------------------------------------------------

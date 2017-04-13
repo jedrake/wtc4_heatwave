@@ -7,6 +7,8 @@ wtc4_heatwave.Rproj
 /Data
 /Doc
 /Output
+/R/depreciated
+exiftool.exe
 
 # Session Data files, HIEv token
 .RData
