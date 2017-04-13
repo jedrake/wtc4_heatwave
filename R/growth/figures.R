@@ -19,7 +19,7 @@ figure_diamHeight_timeseries <- function(hddata,type="chamber"){
   palette(c("#00A2FF", "#F5690C", "#1C41D6", "#FF0A0A")) #shades of blue and red
   
   
-  windows(60,100)
+  pdf("Output/FigureS5-Growth_4treatments.pdf",width=5)
   par(mfrow=c(2,1),mar=c(0,7,0,1),oma=c(6,0,5,0),cex.lab=1.3)
   #---
   #- plot diameter, then height
@@ -156,7 +156,7 @@ figure_diamHeight_timeseries <- function(hddata,type="chamber"){
   lines(x=as.Date(c("2016-09-14","2016-09-28","2016-10-12","2016-10-26")),
         y=predict(lm8,newdata=data.frame(Date=as.Date(c("2016-09-14","2016-09-28","2016-10-12","2016-10-26")))),
         lty=1,col=palette()[4],lwd=1.2)
-  
+  dev.off() 
 }
 
 
@@ -185,7 +185,7 @@ figure_diamHeight_timeseries2trt <- function(hddata,type="chamber"){
   #palette(c("#00A2FF", "#F5690C", "#1C41D6", "#FF0A0A")) #shades of blue and red
   palette(c( "#1C41D6", "#FF0A0A"))
   
-  windows(60,100)
+  pdf("Output/FigureS5-Growth_2treatments.pdf",width=5)
   par(mfrow=c(2,1),mar=c(0,7,0,1),oma=c(6,0,5,0),cex.lab=1.3)
   #---
   #- plot diameter, then height
@@ -288,7 +288,7 @@ figure_diamHeight_timeseries2trt <- function(hddata,type="chamber"){
   lines(x=as.Date(c("2016-09-14","2016-09-28","2016-10-12","2016-10-26")),
         y=predict(lm6,newdata=data.frame(Date=as.Date(c("2016-09-14","2016-09-28","2016-10-12","2016-10-26")))),
         lty=1,col=palette()[2],lwd=1.2)
-  
+  dev.off()
 }
 
 
