@@ -116,7 +116,7 @@ axis(1,at=xvals,labels=c("C","HW"),cex.axis=1.5,tck=0)
 adderrorbars(x=xvals[,1],y=toplot.HW[1:2],SE=sums.m$Photo.g.se,
               direction="updown",col="black",barlen=0.05,lwd=0.5)
 axis(4)
-title(ylab=expression(Total~A[canopy]~(g~m^-2)),outer=T,line=-60,cex.lab=1.8,xpd=NA,adj=0.6) # y-axis label
+title(ylab=expression(Total~A[canopy]~(g~m^-2)),outer=T,line=-47,cex.lab=1.8,xpd=NA,adj=0.6) # y-axis label
 #text(x=xvals[,1]+0.6,y=-1.2,labels=c("C ","HW"),xpd=T,srt=00,pos=2,cex=1.7,xpd=NA)
 legend("topright",legend=letters[4],cex=1.5,bty="n")
 
@@ -144,7 +144,7 @@ adderrorbars(x=xvals[,1],y=toplot.HW[1:2],SE=sums.m$Trans.kg.se,
              direction="updown",col="black",barlen=0.05,lwd=0.5)
 axis(4)
 legend("topright",legend=letters[5],cex=1.5,bty="n")
-title(ylab=expression(Total~E[canopy]~(kg~m^-2)),outer=T,line=-60,cex.lab=1.8,xpd=NA,adj=0.1) # y-axis label
+title(ylab=expression(Total~E[canopy]~(kg~m^-2)),outer=T,line=-47,cex.lab=1.8,xpd=NA,adj=0.1) # y-axis label
 
 
 #-- add left y-axis titles

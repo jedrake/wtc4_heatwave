@@ -15,7 +15,7 @@
 #    be installed manually.
 source("R/loadLibraries.R")
 
-#- Download the data
+#- Download the data. This will place csv files in "/Data"
 download_data()
 #-----------------------------------------------------------------------------------------------------------
 
