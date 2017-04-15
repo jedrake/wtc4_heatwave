@@ -58,8 +58,8 @@ source("R/Figure3_T50_temperatures.R")
 
 #- Run the script to do the model evaluation (Figure 4). This takes a few minutes.
 #    This generates many error messages where the leaf energy balance had two solutions.
-#    For this purpose, these errors can be safely ignored.
-#    To generate the supplemental plots for the Leuning and Ball-Berry models, uncomment code
+#    For the purpose of this work, these errors can be safely ignored.
+#    To generate the supplemental plots for the Leuning and Ball-Berry models, uncomment and run code
 #      at the end of the Figure4-model.R script.
 source("R/Figure4_modeling.R")
 #-----------------------------------------------------------------------------------------------------------
