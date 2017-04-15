@@ -19,7 +19,7 @@ dat$Tdiff_IR <- with(dat,TargTempC_Avg-Tair_al)
 dat$Tdiff_TC <- with(dat,Tleaf-Tair_al)
 
 #- average across treatments for hourly averages
-dat.m$DateTime <- nearestTimeStep(dat.m$DateTime, nminutes = 60, align = "floor")
+dat$DateTime <- nearestTimeStep(dat$DateTime, nminutes = 60, align = "floor")
 
 dat.m <- summaryBy(.~DateTime+T_treatment+HW_Treatment,data=dat,FUN=c(mean,se),keep.names=T)
 dat.m$combotrt <- factor(paste(dat.m$T_treatment,dat.m$HW_Treatment,sep="_"))
@@ -431,8 +431,8 @@ interactionMeans(F1, factors=c("HW_treatment","DateFac"))
 
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
-#- calculate the percentage of leaves damaged by the heatwave
-harvest <- read.csv("Data/Harvest/WTC_TEMP_CM_PARRA_CANOPY-HARVEST_20161121_L0.csv")
+#- calculate the percentage of leaves damaged by the heatwave. (data need uploading to HIEv)
+harvest <- read.csv("Data/WTC_TEMP_CM_PARRA_CANOPY-HARVEST-HEATWAVE_20161121_L0.csv")
 harvest$LeafArea <- with(harvest,Leaf_DW*SLA/10000) # calculate total leaf area (m2) for each canopy layer
 harvest$LeafArea_damage <- with(harvest,HW_damage_DW*SLA/10000) # calculate total leaf area (m2) for each canopy layer damaged by the heatwave
 harvest.sum <- summaryBy(LeafArea+LeafArea_damage~chamber,data=harvest,FUN=sum,keep.names=T) # sumacross the three canopy layers

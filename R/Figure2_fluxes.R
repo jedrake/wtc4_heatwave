@@ -212,16 +212,10 @@ hw.night <- subset(hw.night1,hour(DateTime_hr) <= 4 | hour(DateTime_hr) >= 22)
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 #- calculate % change in response to heatwave for photo and trans
-#  over teh eight day period (4 heatwave days + 4 recovery days)
-sums.m2 <- summaryBy(Photo.g+Trans.kg~HWtrt,data=tosum.c,FUN=c(mean))
-(sums.m2[1,2]-sums.m2[2,2])/sums.m2[1,2] # 20% reduction in C uptake
-(sums.m2[1,3]-sums.m2[2,3])/sums.m2[1,3] # 0.2% reduction in H2O loss
-
-#- calculate % change in response to heatwave for photo and trans
 #  for four heatwave days only
-sums.m3 <- summaryBy(Photo.g+Trans.kg~HWtrt,data=tosum.HW,FUN=c(mean))
-(sums.m3[1,2]-sums.m3[2,2])/sums.m3[1,2] # 40% reduction in C uptake
-(sums.m3[1,3]-sums.m3[2,3])/sums.m3[1,3] # 5% reduction in H2O loss
+sums.m2 <- summaryBy(Photo.g+Trans.kg~HWtrt,data=tosum.c,FUN=c(mean))
+(sums.m2[1,2]-sums.m2[2,2])/sums.m2[1,2] # 40% reduction in C uptake
+(sums.m2[1,3]-sums.m2[2,3])/sums.m2[1,3] # 5% reduction in H2O loss
 
 
 #-------

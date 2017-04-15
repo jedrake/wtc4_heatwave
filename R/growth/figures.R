@@ -24,7 +24,7 @@ figure_diamHeight_timeseries <- function(hddata,type="chamber"){
   #---
   #- plot diameter, then height
   
-  #- plot diameter (65-cm) of control trees
+  #- plot diameter (65-cm) of ambient trees
   with(subset(dfa,HWtrt=="C" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")), plot(Date-1, Diam_65cm.mean, pch=16, 
                  col=palette()[c(1,3)][T_treatment],
                  ylab="Stem diameter (mm)",axes=F,xlim=c(as.Date("2016-9-1"),as.Date("2016-11-15")),
@@ -53,13 +53,13 @@ figure_diamHeight_timeseries <- function(hddata,type="chamber"){
   axis.Date(side=1,at=seq.Date(from=as.Date("2016-9-1"),to=as.Date("2017-1-1"),by="month"),las=2,format="%m/%Y",labels=F)
   axis(2);box();axis(4)
  
-  legend(x=as.Date("2016-8-15"),y=75, legend=c("Ambient-Control","Ambient-Heatwave","Warmed-Control","Warmed-Heatwave"),
+  legend(x=as.Date("2016-8-15"),y=75, legend=c("Ambient-control","Ambient-Heatwave","elevated-Control","Warmed-Heatwave"),
          pch=c(16,16,16,16), col=palette()[1:4], bty='n',ncol=2,xpd=NA) 
   legend("bottomright",legend=letters[1],cex=1.4,bty="n")
   
   #-- add linear models fit to the first four dates, extrapolated to the fifth
   lm1 <- lm(Diam_65cm.mean~Date,
-            data=subset(dfa,HWtrt=="C" & T_treatment=="control" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
+            data=subset(dfa,HWtrt=="C" & T_treatment=="ambient" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
   lines(x=as.Date(c("2016-10-26","2016-11-09")),
         y=predict(lm1,newdata=data.frame(Date=as.Date(c("2016-10-26","2016-11-09")))),
         lty=2,col=palette()[1])
@@ -67,7 +67,7 @@ figure_diamHeight_timeseries <- function(hddata,type="chamber"){
         y=predict(lm1,newdata=data.frame(Date=as.Date(c("2016-09-14","2016-09-28","2016-10-12","2016-10-26")))),
         lty=1,col=palette()[1],lwd=1.2)
   lm2 <- lm(Diam_65cm.mean~Date,
-            data=subset(dfa,HWtrt=="HW" & T_treatment=="control" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
+            data=subset(dfa,HWtrt=="HW" & T_treatment=="ambient" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
   lines(x=as.Date(c("2016-10-26","2016-11-09")),
         y=predict(lm2,newdata=data.frame(Date=as.Date(c("2016-10-26","2016-11-09")))),
         lty=2,col=palette()[2])
@@ -75,7 +75,7 @@ figure_diamHeight_timeseries <- function(hddata,type="chamber"){
         y=predict(lm2,newdata=data.frame(Date=as.Date(c("2016-09-14","2016-09-28","2016-10-12","2016-10-26")))),
         lty=1,col=palette()[2],lwd=1.2)
   lm3 <- lm(Diam_65cm.mean~Date,
-            data=subset(dfa,HWtrt=="C" & T_treatment=="warmed" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
+            data=subset(dfa,HWtrt=="C" & T_treatment=="elevated" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
   lines(x=as.Date(c("2016-10-26","2016-11-09")),
         y=predict(lm3,newdata=data.frame(Date=as.Date(c("2016-10-26","2016-11-09")))),
         lty=2,col=palette()[3])
@@ -83,7 +83,7 @@ figure_diamHeight_timeseries <- function(hddata,type="chamber"){
         y=predict(lm3,newdata=data.frame(Date=as.Date(c("2016-09-14","2016-09-28","2016-10-12","2016-10-26")))),
         lty=1,col=palette()[3],lwd=1.2)
   lm4 <- lm(Diam_65cm.mean~Date,
-            data=subset(dfa,HWtrt=="HW" & T_treatment=="warmed" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
+            data=subset(dfa,HWtrt=="HW" & T_treatment=="elevated" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
   lines(x=as.Date(c("2016-10-26","2016-11-09")),
         y=predict(lm4,newdata=data.frame(Date=as.Date(c("2016-10-26","2016-11-09")))),
         col=palette()[4],lty=2)
@@ -125,7 +125,7 @@ figure_diamHeight_timeseries <- function(hddata,type="chamber"){
   
   #-- add linear models fit to the first four dates, extrapolated to the fifth
   lm5 <- lm(Stem_length_cm.mean~Date,
-            data=subset(dfa,HWtrt=="C" & T_treatment=="control" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
+            data=subset(dfa,HWtrt=="C" & T_treatment=="ambient" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
   lines(x=as.Date(c("2016-10-26","2016-11-09")),
         y=predict(lm5,newdata=data.frame(Date=as.Date(c("2016-10-26","2016-11-09")))),
         lty=2,col=palette()[1])
@@ -133,7 +133,7 @@ figure_diamHeight_timeseries <- function(hddata,type="chamber"){
         y=predict(lm5,newdata=data.frame(Date=as.Date(c("2016-09-14","2016-09-28","2016-10-12","2016-10-26")))),
         lty=1,col=palette()[1],lwd=1.2)
   lm6 <- lm(Stem_length_cm.mean~Date,
-            data=subset(dfa,HWtrt=="HW" & T_treatment=="control" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
+            data=subset(dfa,HWtrt=="HW" & T_treatment=="ambient" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
   lines(x=as.Date(c("2016-10-26","2016-11-09")),
         y=predict(lm6,newdata=data.frame(Date=as.Date(c("2016-10-26","2016-11-09")))),
         col=palette()[2],lty=2)
@@ -141,7 +141,7 @@ figure_diamHeight_timeseries <- function(hddata,type="chamber"){
         y=predict(lm6,newdata=data.frame(Date=as.Date(c("2016-09-14","2016-09-28","2016-10-12","2016-10-26")))),
         lty=1,col=palette()[2],lwd=1.2)
   lm7 <- lm(Stem_length_cm.mean~Date,
-           data=subset(dfa,HWtrt=="C" & T_treatment=="warmed" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
+           data=subset(dfa,HWtrt=="C" & T_treatment=="elevated" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
   lines(x=as.Date(c("2016-10-26","2016-11-09")),
         y=predict(lm7,newdata=data.frame(Date=as.Date(c("2016-10-26","2016-11-09")))),
         lty=2,col=palette()[3])
@@ -149,7 +149,7 @@ figure_diamHeight_timeseries <- function(hddata,type="chamber"){
         y=predict(lm7,newdata=data.frame(Date=as.Date(c("2016-09-14","2016-09-28","2016-10-12","2016-10-26")))),
         lty=1,col=palette()[3],lwd=1.2)
   lm8 <- lm(Stem_length_cm.mean~Date,
-            data=subset(dfa,HWtrt=="HW" & T_treatment=="warmed" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
+            data=subset(dfa,HWtrt=="HW" & T_treatment=="elevated" & Date>as.Date("2016-9-1") & Date<as.Date("2016-11-15")))
   lines(x=as.Date(c("2016-10-26","2016-11-09")),
         y=predict(lm8,newdata=data.frame(Date=as.Date(c("2016-10-26","2016-11-09")))),
         col=palette()[4],lty=2)

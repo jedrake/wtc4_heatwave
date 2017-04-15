@@ -10,22 +10,26 @@
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 #- read in the raw data
+hddata1 <- read.csv("Data/WTC_TEMP-PARRA_CM_TREE-HEIGHT-DIAMETER_20151028-20161124_L1.csv")
+
+
 
 # Load packages, code.
-source("R/growth/load.R")
+#source("R/growth/load.R")
 
 
 # Directory with height / diameter measurements
-hddir <- file.path("Data/RAW_GROWTH_DATA/WTC4 tree measure data")
+#hddir <- file.path("Data/RAW_GROWTH_DATA/WTC4 tree measure data")
 
 # Make full dataset, merge in the heatwave trt
-hddata1 <- make_hddata(hddir)
-hddata1$chamber <- as.factor(paste0("C", sprintf("%02.0f", hddata1$Ch_No)))
+#hddata1 <- make_hddata(hddir)
+#hddata1$chamber <- as.factor(paste0("C", sprintf("%02.0f", hddata1$Ch_No)))
 
 linkdf <- data.frame(chamber = levels(as.factor(hddata1$chamber)),
                      HWtrt = c("C","C","HW","HW","C","C","HW","C","HW","HW","C","HW"))
 
 hddata <- merge(hddata1,linkdf,by="chamber")
+hddata$Date <- as.Date(hddata$Date)
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 

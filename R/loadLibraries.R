@@ -49,7 +49,7 @@ setToken(tokenfile="HIEv_token.txt")
 
 
 
-#- install the geneplotter package to make density plots
+#- install the geneplotter package to make density plots. This needs to be done via the method below.
 ## try http:// if https:// URLs are not supported
 #source("https://bioconductor.org/biocLite.R")
 #biocLite("geneplotter")
@@ -61,7 +61,7 @@ if(!r)stop("Install the geneplotter package. See code in R/loadLibraries.R for d
 #- function to download data, either from HIEv or from published repository
 download_data <- function(){
   
-  #- get the combined temperature dataset
+  #- get the combined temperature dataset (thermocouples, infrared, air temperature)
   downloadHIEv(hiev=searchHIEv("WTC-TEMP_PARRA-CM-TEMPERATURES_COMBINED-20161010-20161123_L1.csv"),topath="Data")
   
   #- get the whole tree flux dataset.
@@ -74,6 +74,12 @@ download_data <- function(){
   
   #- get T50 data
   downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_T50-CI_20161019-20161117_L1.csv"),topath="Data")
+  
+  #- get the canopy harvest data. 
+  downloadHIEv(hiev=searchHIEv("WTC_TEMP_CM_PARRA_CANOPY-HARVEST-HEATWAVE_20161121_L0.csv"),topath="Data")
+  
+  #- get the diameter and height data
+  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_TREE-HEIGHT-DIAMETER_20151028-20161124_L1.csv"),topath="Data")
   
 }
 
