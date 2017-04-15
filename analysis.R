@@ -25,7 +25,7 @@ download_data()
 #- F I G U R E   1
 #-----------------------------------------------------------------------------------------------------------
 
-#- The photos for figure 1 are in /Figure1-site_photos.jpeg
+#- The photos that make up figure 1 are in /Figure1-site_photos.jpeg
 #-----------------------------------------------------------------------------------------------------------
 
 
@@ -34,7 +34,7 @@ download_data()
 #- F I G U R E   2
 #-----------------------------------------------------------------------------------------------------------
 
-#- Run the script to process and plot the whole-tree chamber flux data (Fig. 2)
+#- Run this script to process and plot the whole-tree chamber flux data (Fig. 2)
 #    creates a pdf in "Output" named Figure2_fluxes.pdf .
 source("R/Figure2_fluxes.R")
 #-----------------------------------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ source("R/Figure2_fluxes.R")
 #- F I G U R E   3
 #-----------------------------------------------------------------------------------------------------------
 
-#- Run the script to process and plot the T50 and temperature data (Fig. 3)
+#- Run this script to process and plot the T50 and temperature data (Fig. 3)
 #    creates several pdfs in "Output" named Figure3-X.pdf .
 source("R/Figure3_T50_temperatures.R")
 #-----------------------------------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ source("R/Figure3_T50_temperatures.R")
 #- F I G U R E   4
 #-----------------------------------------------------------------------------------------------------------
 
-#- Run the script to do the model evaluation (Figure 4). This takes a few minutes.
+#- Run this script to do the model evaluation (Figure 4). This takes a few minutes.
 #    This generates many error messages where the leaf energy balance had two solutions.
 #    For the purpose of this work, these errors can be safely ignored.
 #    To generate the supplemental plots for the Leuning and Ball-Berry models, uncomment and run code
@@ -70,9 +70,10 @@ source("R/Figure4_modeling.R")
 
 
 
-
+#-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 #- S U P P L E M E N T A L     T H I N G S
+#-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 
 
@@ -81,6 +82,6 @@ source("R/Figure4_modeling.R")
 #- F I G U R E   S5
 #-----------------------------------------------------------------------------------------------------------
 
-#- Run the script to plot diameter and height increment (Figure S5).
+#- Run this script to plot diameter and height increment (Figure S5).
 source("R/plot_growth_heatwave.R")
 #-----------------------------------------------------------------------------------------------------------
