@@ -1,3 +1,8 @@
+#--------------------------------------------------------------
+#- This script loads required R libraries and creates some
+#   custom functions for downloading and plotting data.
+#--------------------------------------------------------------
+
 #- create data and output directories, if they do not exist
 if(!dir.exists("Data")) dir.create(file.path("Data"),showWarnings=F)
 if(!dir.exists("Output")) dir.create(file.path("Output"),showWarnings=F)
@@ -62,22 +67,22 @@ if(!r)stop("Install the geneplotter package. See code in R/loadLibraries.R for d
 download_data <- function(){
   
   #- get the combined temperature dataset (thermocouples, infrared, air temperature)
-  downloadHIEv(hiev=searchHIEv("WTC-TEMP_PARRA-CM-TEMPERATURES_COMBINED-20161010-20161123_L1.csv"),topath="Data")
+  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_TEMPERATURES-COMBINED_20161010-20161123_L1.csv"),topath="Data")
   
   #- get the whole tree flux dataset.
-  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv"),topath="Data")
+  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv"),topath="Data")
 
   #- get hydraulics datasets. 
-  downloadHIEv(hiev=searchHIEv("WTC_TEMP_CM_PARRA_KLEAF-HEATWAVE_20161104_L0.csv"),topath="Data")
-  downloadHIEv(hiev=searchHIEv("WTC_TEMP_CM_PARRA_NATIVE-EMBOLISM-HEATWAVE"),topath="Data")
-  downloadHIEv(hiev=searchHIEv("WTC_TEMP_CM_PARRA_WATERPOTENTIAL-HEATWAVE"),topath="Data")
-  downloadHIEv(hiev=searchHIEv("WTC_TEMP_CM_PARRA_TURGOR-LOSS-POINT-HEATWAVE_20161104_L0.csv"),topath="Data")
+  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_PARRA_KLEAF-HEATWAVE_20161104_L0.csv"),topath="Data")
+  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_NATIVE-EMBOLISM-HEATWAVE_20161018-20161104_L0_v2.csv"),topath="Data")
+  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_WATERPOTENTIAL-HEATWAVE_20161019-20161107_L0.csv"),topath="Data")
+  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_TURGOR-LOSS-POINT-HEATWAVE_20161104_L0.csv"),topath="Data")
   
   #- get T50 data
   downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_T50-CI_20161019-20161117_L1.csv"),topath="Data")
   
   #- get the canopy harvest data. 
-  downloadHIEv(hiev=searchHIEv("WTC_TEMP_CM_PARRA_CANOPY-HARVEST-HEATWAVE_20161121_L0.csv"),topath="Data")
+  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_CANOPY-HARVEST-HEATWAVE_20161121_L0.csv"),topath="Data")
   
   #- get the diameter and height data
   downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_TREE-HEIGHT-DIAMETER_20151028-20161124_L1.csv"),topath="Data")
