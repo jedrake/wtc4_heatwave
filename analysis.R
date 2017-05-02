@@ -47,6 +47,7 @@ source("R/Figure2_fluxes.R")
 
 #- Run this script to process and plot the T50 and temperature data (Fig. 3)
 #    creates several pdfs in "Output" named Figure3-X.pdf .
+#    Also makes Figure S3 (met and leaf temperature data)
 source("R/Figure3_T50_temperatures.R")
 #-----------------------------------------------------------------------------------------------------------
 

@@ -336,7 +336,7 @@ rect(xleft=dates[1],ybottom=-50,xright=dates[2],ytop=3000,col="darkgrey",density
 
 #- plot Tleaf (IR)
 plotBy(TargTempC_Avg.mean~DateTime|combotrt,data=dat.m,legend=F,col=palette()[1:4],type="l",lwd=2,ylim=c(5,50),
-       ylab=expression(T[l-IR]),xaxt="n");axis(side=4)
+       ylab=expression(T[L-IR]),xaxt="n");axis(side=4)
 adderrorbars(x=dat.m$DateTime,y=dat.m$TargTempC_Avg.mean,SE=dat.m$TargTempC_Avg.se,direction="updown",col=dat.m$combotrt,barlen=0)
 axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime,tz="GMT"))),las=3,cex.axis=1.5,labels=F)
 legend("topright",legend=letters[4],cex=1.4,bty="n")
@@ -344,7 +344,7 @@ rect(xleft=dates[1],ybottom=-50,xright=dates[2],ytop=3000,col="darkgrey",density
 
 #- plot Tleaf (TC)
 plotBy(Tleaf.mean~DateTime|combotrt,data=dat.m,legend=F,col=palette()[1:4],type="l",lwd=2,ylim=c(5,50),
-       ylab=expression(T[l-TC]),xaxt="n");axis(side=4)
+       ylab=expression(T[L-TC]),xaxt="n");axis(side=4)
 adderrorbars(x=dat.m$DateTime,y=dat.m$Tleaf.mean,SE=dat.m$Tleaf.se,direction="updown",col=dat.m$combotrt,barlen=0)
 axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime,tz="GMT"))),las=3,cex.axis=1.5,labels=F)
 legend("topright",legend=letters[5],cex=1.4,bty="n")
@@ -352,7 +352,7 @@ rect(xleft=dates[1],ybottom=-50,xright=dates[2],ytop=3000,col="darkgrey",density
 
 #- plot Tleaf diferrence (IR)
 plotBy(Tdiff_IR.mean~DateTime|combotrt,data=dat.m,legend=F,col=palette()[1:4],type="l",lwd=2,ylim=c(-2,7),
-       ylab=expression(T[l-IR]-T[air]),xaxt="n");axis(side=4);abline(h=0)
+       ylab=expression(T[L-IR]-T[air]),xaxt="n");axis(side=4);abline(h=0)
 adderrorbars(x=dat.m$DateTime,y=dat.m$Tdiff_IR.mean,SE=dat.m$Tdiff_IR.se,direction="updown",col=dat.m$combotrt,barlen=0)
 axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime,tz="GMT"))),las=3,cex.axis=1.5,labels=F)
 legend("topright",legend=letters[6],cex=1.4,bty="n")
@@ -360,7 +360,7 @@ rect(xleft=dates[1],ybottom=-50,xright=dates[2],ytop=3000,col="darkgrey",density
 
 #- plot Tleaf diferrence (TC)
 plotBy(Tdiff_TC.mean~DateTime|combotrt,data=dat.m,legend=F,col=palette()[1:4],type="l",lwd=2,ylim=c(-2,7),
-       ylab=expression(T[l-TC]-T[air]),xaxt="n");axis(side=4);abline(h=0)
+       ylab=expression(T[L-TC]-T[air]),xaxt="n");axis(side=4);abline(h=0)
 adderrorbars(x=dat.m$DateTime,y=dat.m$Tdiff_TC.mean,SE=dat.m$Tdiff_TC.se,direction="updown",col=dat.m$combotrt,barlen=0)
 axis.POSIXct(side=1,at=as.POSIXct(unique(as.Date(dat.m$DateTime,tz="GMT"))),las=3,cex.axis=1.5,labels=T)
 legend("topright",legend=letters[7],cex=1.4,bty="n")
