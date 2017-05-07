@@ -192,7 +192,7 @@ adderrorbars(x=xvals[2,],y=embolism.m$KSf.mean,SE=embolism.m$KSf.se,
 text(x=xvals[2,]+1,y=-0.1,cex=1.5,
      labels=c("AC","AH","WC","WH"),xpd=T,srt=0,pos=2)
 title(ylab=expression(atop(Branch~conductivity,
-                           (Kg~m^-1~s^-1~MPa^-1))),cex.lab=1.8,xpd=NA) # y-axis label
+                           (kg~m^-1~s^-1~MPa^-1))),cex.lab=1.8,xpd=NA) # y-axis label
 legend("topleft",col="black",legend=c("Native","Rehydrated"),
        ncol=1, fill="black", bty="n",
        cex=1.3, seg.len = 6, angle=45, density=c(0,15))

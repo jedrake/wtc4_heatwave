@@ -60,7 +60,7 @@ source("R/Figure3_T50_temperatures.R")
 #- Run this script to do the model evaluation (Figure 4). This takes a few minutes.
 #    This generates many error messages where the leaf energy balance had two solutions.
 #    For the purpose of this work, these errors can be safely ignored.
-#    To generate the supplemental plots for the Leuning and Ball-Berry models, uncomment and run code
+#    To generate the supplemental plots for the Leuning and Ball-Berry models (Figs. S8-S9), uncomment and run code
 #      at the end of the Figure4-model.R script.
 source("R/Figure4_modeling.R")
 #-----------------------------------------------------------------------------------------------------------
@@ -80,9 +80,12 @@ source("R/Figure4_modeling.R")
 
 
 #-----------------------------------------------------------------------------------------------------------
-#- F I G U R E   S5
+#- F I G U R E S
 #-----------------------------------------------------------------------------------------------------------
 
-#- Run this script to plot diameter and height increment (Figure S5).
+#- Run this script to plot leaf water potential and branch and stem hydraulics (Figs. S4-S5)
+source("R/plot_midday_LWP.R")
+
+#- Run this script to plot diameter and height increment (Figure S7).
 source("R/plot_growth_heatwave.R")
 #-----------------------------------------------------------------------------------------------------------
