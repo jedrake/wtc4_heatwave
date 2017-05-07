@@ -68,6 +68,11 @@ hddata$Date <- as.Date(hddata$Date)
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 # Make figure
+
+#- source functions first
+source("R/growth/functions-figures.R")
+source("R/growth/figures.R")
+
 figure_diamHeight_timeseries(hddata,type="chamber")
 figure_diamHeight_timeseries2trt(hddata,type="chamber")
 
