@@ -5,10 +5,6 @@
 #----------------------------------------------------------------------------------------------------------
 
 
-
-source("R/loadLibraries.R")
-
-
 #-----------------------------------------------------------------------------------------------------------
 #- download the soil volumetric water content data from HIEv, for WTC4
 
@@ -39,8 +35,6 @@ soildat <- merge(d,d2,by=c("Date","DateTime","chamber","T_treatment"),all.x=T)
 #-----------------------------------------------------------------------------------------------------------
 #- Do some data manipulation
 soildat$VW_surface <- rowMeans(soildat[,c("VW_Avg.1.","VW2_Avg.1.","VW2_Avg.2.")],na.rm=F)
-
-#- remove all the bad soil temperature data...
 #-----------------------------------------------------------------------------------------------------------
 
 
@@ -62,16 +56,88 @@ dfr.day2$combotrt <- factor(paste(dfr.day2$T_treatment,dfr.day2$HWtrt,sep="_"))
 
 dfr.day.treat <- summaryBy(.~Date+combotrt,data=subset(dfr.day2,Date>as.Date("2016-10-25")),
                            FUN=c(mean,se),keep.names=T,na.rm=T)
-#dfr.day.a <- subset(dfr.day.treat,T_treatment=="ambient")
-#dfr.day.e <- subset(dfr.day.treat,T_treatment=="elevated")
-
-
-#- alternatively, 
+#-----------------------------------------------------------------------------------------------------------
 
 
 
 
-windows(80,70)
+
+
+
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+
+#- plot TDR measurements of soil water content, averaged over control vs. heatwave treatments
+
+dfr.day.treat.hw <- summaryBy(.~Date+HWtrt,data=subset(dfr.day2,Date>as.Date("2016-10-25")),
+                              FUN=c(mean,se),keep.names=T,na.rm=T)
+
+
+#windows(80,70)
+pdf("Output/FigureS1-Soil_water_content_TDR_2trt.pdf",width=6,height=8)
+
+par(mfrow=c(3,1),cex.lab=1.75,cex.axis=1.5,mar=c(0,8,0,1),oma=c(6,3,5,0),las=1)
+palette(c("blue","red"))
+ylims <- c(0,0.2)
+
+#- average of three surface sensors
+plotBy(VW_surface.mean~Date|HWtrt,data=dfr.day.treat.hw,type="l",legend=F,ylim=ylims,xaxt="n",
+       ylab="",lwd=3)
+title(ylab="5-cm-depth",line=4)
+#- add shaded rectangle for heatwave
+dates <- as.Date(c("2016-10-31","2016-11-5"),format="%Y-%m-%d")
+rect(xleft=dates[1],ybottom=-4,xright=dates[2],ytop=15,col="darkgrey",density=7) #add rectangles for droughts
+
+adderrorbars(x=dfr.day.treat.hw$Date,y=dfr.day.treat.hw$VW_surface.mean,SE=dfr.day.treat.hw$VW_surface.se,
+             direction="updown",col=dfr.day.treat.hw$HWtrt,barlen=0)
+plotBy(VW_surface.mean~Date|HWtrt,data=dfr.day.treat.hw,type="l",legend=F,ylim=c(0,0.3),add=T,
+       ylab="",lwd=3)
+legend(x=as.Date("2016-10-28"),y=0.25,xpd=NA,lwd=3,col=palette()[1:2],ncol=2,cex=1.5,bty="n",
+       legend=c("Control","Heatwave"))
+abline(h=c(0.05,0.2),lty=2)
+axis.Date(side=1,at=seq.Date(as.Date("2016-9-1"),as.Date("2016-11-10"),by="week"),labels=F,tck=0.05)
+
+#- mid depth
+plotBy(VW_Avg.2..mean~Date|HWtrt,data=dfr.day.treat.hw,type="l",legend=F,ylim=ylims,xaxt="n",
+       ylab="",lwd=3)
+adderrorbars(x=dfr.day.treat.hw$Date,y=dfr.day.treat.hw$VW_Avg.2..mean,SE=dfr.day.treat.hw$VW_Avg.2..se,
+             direction="updown",col=dfr.day.treat.hw$HWtrt,barlen=0)
+rect(xleft=dates[1],ybottom=-4,xright=dates[2],ytop=15,col="darkgrey",density=7) #add rectangles for droughts
+title(ylab="30-cm-depth",line=4)
+abline(h=c(0.05,0.2),lty=2)
+axis.Date(side=1,at=seq.Date(as.Date("2016-9-1"),as.Date("2016-11-10"),by="week"),labels=F,tck=0.05)
+
+#- deep
+plotBy(VW_Avg.3..mean~Date|HWtrt,data=dfr.day.treat.hw,type="l",legend=F,ylim=ylims,xaxt="n",
+       ylab="",lwd=3)
+adderrorbars(x=dfr.day.treat.hw$Date,y=dfr.day.treat.hw$VW_Avg.3..mean,SE=dfr.day.treat.hw$VW_Avg.3..se,
+             direction="updown",col=dfr.day.treat.hw$HWtrt,barlen=0)
+rect(xleft=dates[1],ybottom=-4,xright=dates[2],ytop=15,col="darkgrey",density=7) #add rectangles for droughts
+title(ylab="90-cm-depth",line=4)
+abline(h=c(0.05,0.2),lty=2)
+axis.Date(side=1,at=seq.Date(as.Date("2016-9-1"),as.Date("2016-11-10"),by="week"),labels=T,tck=0.05)
+
+
+title(ylab=expression(VWC~(m^3~m^-3)),outer=T,cex.lab=3,line=-2)
+dev.off()
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+#- Alternatively, plot all 4 treatments
+#windows(80,70)
+pdf("Output/FigureS1-alternative-Soil_water_content_TDR_4trt.pdf",width=6,height=8)
+
 par(mfrow=c(3,1),cex.lab=1.75,cex.axis=1.5,mar=c(0,8,0,1),oma=c(6,3,5,0),las=1)
 palette(c("blue","black","red","orange"))
 ylims <- c(0,0.2)
@@ -88,7 +154,7 @@ adderrorbars(x=dfr.day.treat$Date,y=dfr.day.treat$VW_surface.mean,SE=dfr.day.tre
              direction="updown",col=dfr.day.treat$combotrt,barlen=0)
 plotBy(VW_surface.mean~Date|combotrt,data=dfr.day.treat,type="l",legend=F,ylim=c(0,0.3),add=T,
        ylab="",lwd=3)
-legend(x=as.Date("2016-10-30"),y=0.27,xpd=NA,lwd=3,col=palette()[1:4],ncol=2,cex=1.5,bty="n",
+legend(x=as.Date("2016-10-25"),y=0.27,xpd=NA,lwd=3,col=palette()[1:4],ncol=2,cex=1.5,bty="n",
        legend=c("Ambient-Control","Ambient-Heatwave","Warmed-Control","Warmed-Heatwave"))
 legend("topright",legend=letters[1],cex=2,bty="n")
 abline(h=c(0.05,0.2),lty=2)
@@ -118,7 +184,14 @@ axis.Date(side=1,at=seq.Date(as.Date("2016-9-1"),as.Date("2016-11-10"),by="week"
 
 
 title(ylab=expression(VWC~(m^3~m^-3)),outer=T,cex.lab=3,line=-2)
+dev.off()
 #-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+
+
+
+
+
 
 
 
@@ -145,60 +218,6 @@ mean(vwc.hw$VWCall)
 
 
 
-#- alternatively, average just over the heatwave treatments
-
-dfr.day.treat.hw <- summaryBy(.~Date+HWtrt,data=subset(dfr.day2,Date>as.Date("2016-10-25")),
-                                                       FUN=c(mean,se),keep.names=T,na.rm=T)
-
-
-windows(80,120)
-par(mfrow=c(3,1),cex.lab=1.75,cex.axis=1.5,mar=c(0,8,0,1),oma=c(6,3,5,0),las=1)
-palette(c("blue","red"))
-ylims <- c(0,0.2)
-
-#- average of three surface sensors
-plotBy(VW_surface.mean~Date|HWtrt,data=dfr.day.treat.hw,type="l",legend=F,ylim=ylims,xaxt="n",
-       ylab="",lwd=3)
-title(ylab="5-cm-depth",line=4)
-#- add shaded rectangle for heatwave
-dates <- as.Date(c("2016-10-31","2016-11-5"),format="%Y-%m-%d")
-rect(xleft=dates[1],ybottom=-4,xright=dates[2],ytop=15,col="darkgrey",density=7) #add rectangles for droughts
-
-adderrorbars(x=dfr.day.treat.hw$Date,y=dfr.day.treat.hw$VW_surface.mean,SE=dfr.day.treat.hw$VW_surface.se,
-             direction="updown",col=dfr.day.treat.hw$HWtrt,barlen=0)
-plotBy(VW_surface.mean~Date|HWtrt,data=dfr.day.treat.hw,type="l",legend=F,ylim=c(0,0.3),add=T,
-       ylab="",lwd=3)
-legend(x=as.Date("2016-10-25"),y=0.27,xpd=NA,lwd=3,col=palette()[1:2],ncol=2,cex=1.5,bty="n",
-       legend=c("Control","Heatwave"))
-abline(h=c(0.05,0.2),lty=2)
-axis.Date(side=1,at=seq.Date(as.Date("2016-9-1"),as.Date("2016-11-10"),by="week"),labels=F,tck=0.05)
-
-#- mid depth
-plotBy(VW_Avg.2..mean~Date|HWtrt,data=dfr.day.treat.hw,type="l",legend=F,ylim=ylims,xaxt="n",
-       ylab="",lwd=3)
-adderrorbars(x=dfr.day.treat.hw$Date,y=dfr.day.treat.hw$VW_Avg.2..mean,SE=dfr.day.treat.hw$VW_Avg.2..se,
-             direction="updown",col=dfr.day.treat.hw$HWtrt,barlen=0)
-rect(xleft=dates[1],ybottom=-4,xright=dates[2],ytop=15,col="darkgrey",density=7) #add rectangles for droughts
-title(ylab="30-cm-depth",line=4)
-abline(h=c(0.05,0.2),lty=2)
-axis.Date(side=1,at=seq.Date(as.Date("2016-9-1"),as.Date("2016-11-10"),by="week"),labels=F,tck=0.05)
-
-#- deep
-plotBy(VW_Avg.3..mean~Date|HWtrt,data=dfr.day.treat.hw,type="l",legend=F,ylim=ylims,xaxt="n",
-       ylab="",lwd=3)
-adderrorbars(x=dfr.day.treat.hw$Date,y=dfr.day.treat.hw$VW_Avg.3..mean,SE=dfr.day.treat.hw$VW_Avg.3..se,
-             direction="updown",col=dfr.day.treat.hw$HWtrt,barlen=0)
-rect(xleft=dates[1],ybottom=-4,xright=dates[2],ytop=15,col="darkgrey",density=7) #add rectangles for droughts
-title(ylab="90-cm-depth",line=4)
-abline(h=c(0.05,0.2),lty=2)
-axis.Date(side=1,at=seq.Date(as.Date("2016-9-1"),as.Date("2016-11-10"),by="week"),labels=T,tck=0.05)
-
-
-title(ylab=expression(VWC~(m^3~m^-3)),outer=T,cex.lab=3,line=-2)
-#-----------------------------------------------------------------------------------------------------------
-
-
-
 
 
 
@@ -222,4 +241,4 @@ d$Source <- d$RECORD <- NULL
 
 #- average across everything
 d.m <- summaryBy(VW_Avg.1.~Date,data=d,FUN=mean,keep.names=T)
-plot(VW_Avg.1.~Date,data=d.m,type="o")
+#plot(VW_Avg.1.~Date,data=d.m,type="o")

@@ -83,6 +83,12 @@ source("R/Figure4_modeling.R")
 #- F I G U R E S
 #-----------------------------------------------------------------------------------------------------------
 
+#- Run this script to plot the TDR measurements of soil water content (Fig. S1)
+source("R/plot_VWC_TDR.R")
+
+#- Run this script to plot the neutron probe measurements of soil water content (Fig. S2)
+source("R/plot_neutron_probe.R")
+
 #- Run this script to plot leaf water potential and branch and stem hydraulics (Figs. S4-S5)
 source("R/plot_midday_LWP.R")
 
