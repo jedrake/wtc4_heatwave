@@ -11,6 +11,7 @@
 #- read in the file of combined temperatures from HIEv.
 dat.raw2 <- data.frame(data.table::fread("Data/WTC-TEMP_PARRA-CM-TEMPERATURES_COMBINED-20161010-20161123_L1.csv"))
 dat.raw2$DateTime <- as.POSIXct(dat.raw2$DateTime,format="%Y-%m-%d %T",tz="GMT")
+dat.raw2$Date <- as.Date(dat.raw2$DateTime)
 
 dat <- subset(dat.raw2,as.Date(DateTime)>=as.Date("2016-10-29") & as.Date(DateTime)<=as.Date("2016-11-10"))
 
@@ -66,11 +67,18 @@ thermo$TargTempC_Avg.mean <- thermo$Tair_al.mean <- thermo$TargTempC_Avg.max <- 
 for (i in 1:nrow(thermo)){
   searchdate <- thermo$Date[i]
   mindate <- searchdate-ndays
-  inds <- which(Tdat$Date >=mindate & Tdat$Date <searchdate & Tdat$chamber == thermo$chamber[i])
-  thermo$TargTempC_Avg.mean[i] <- mean(Tdat[inds,"TargTempC_Avg.mean"],na.rm=T)
-  thermo$Tair_al.mean[i] <- mean(Tdat[inds,"Tair_al.mean"],na.rm=T)
-  thermo$TargTempC_Avg.max[i] <- mean(Tdat[inds,"TargTempC_Avg.max"],na.rm=T)
-  thermo$Tair_al.max[i] <- mean(Tdat[inds,"Tair_al.max"],na.rm=T)
+  # inds <- which(Tdat$Date >=mindate & Tdat$Date <searchdate & Tdat$chamber == thermo$chamber[i])
+  # thermo$TargTempC_Avg.mean[i] <- mean(Tdat[inds,"TargTempC_Avg.mean"],na.rm=T)
+  # thermo$Tair_al.mean[i] <- mean(Tdat[inds,"Tair_al.mean"],na.rm=T)
+  # thermo$TargTempC_Avg.max[i] <- mean(Tdat[inds,"TargTempC_Avg.max"],na.rm=T)
+  # thermo$Tair_al.max[i] <- mean(Tdat[inds,"Tair_al.max"],na.rm=T)
+  
+  # switched to using dat.raw2 instead of Tdat
+  inds <- which(dat.raw2$Date >=mindate & dat.raw2$Date <searchdate & dat.raw2$chamber == thermo$chamber[i])
+  thermo$TargTempC_Avg.mean[i] <- mean(dat.raw2[inds,"TargTempC_Avg"],na.rm=T)
+  thermo$Tair_al.mean[i] <- mean(dat.raw2[inds,"Tair_al"],na.rm=T)
+  thermo$TargTempC_Avg.max[i] <- max(dat.raw2[inds,"TargTempC_Avg"],na.rm=T)
+  thermo$Tair_al.max[i] <- max(dat.raw2[inds,"Tair_al"],na.rm=T)
   
 }  
 
@@ -81,8 +89,8 @@ palette(c("blue","red"))
 
 #-- plot T50 vs. time
 #windows(50,60)
-pdf("Output/Figure3a_T50.pdf",width=5.5)
-par(cex.lab=1.6,xpd=F,las=1,mar=c(5,7,3,1),cex.lab=2)
+pdf("Output/Figure3a_T50.pdf",width=10.5)
+par(mfrow=c(1,2),cex.lab=1.6,xpd=F,las=1,mar=c(5,7,3,1))
 plotBy(T50_mean.mean~Date|HW_treatment,data=thermo.m2,type="o",pch=16,ylim=c(47,52),cex=1.5,legend=F,
        ylab=expression(Leaf~thermal~threshold~(T[50]*";"~degree*C)))
 
@@ -99,6 +107,16 @@ plotBy(T50_mean.mean~Date|HW_treatment,data=thermo.m2,type="o",pch=16,ylim=c(47,
 legend("topleft",legend=letters[1],cex=1.4,bty="n")
 text(x=thermo.m2$Date[1]+5,y=47,"Pre-heatwave",cex=1.2)
 text(x=thermo.m2$Date[1]+23,y=47,"Post-heatwave",cex=1.2)
+
+#- plot T50 vs. leaf temperature
+plotBy(T50_mean~TargTempC_Avg.mean|HW_treatment,data=thermo,type="p",pch=16,ylim=c(47,52),cex=1.5,legend=F,
+       ylab=expression(Leaf~thermal~threshold~(T[50]*";"~degree*C)),
+       xlab=expression(Canopy~temperature~(T[L-IR]*";"~degree*C)))
+legend("topleft",legend=letters[2],cex=1.4,bty="n")
+lm1 <- lm(T50_mean~TargTempC_Avg.mean,data=thermo)
+ablineclip(lm1,x1=min(thermo$TargTempC_Avg.mean),x2=max(thermo$TargTempC_Avg.mean))
+ellipse(c(21,50.2),shape=matrix(c(12,0.1,0.1,12),nrow=2,ncol=2),radius=c(0.7,0.2))
+
 dev.off()
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
@@ -251,7 +269,38 @@ dev.off()
 
 
 
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+#- did Tleaf exceed the pre-heatwave T50? Yes, for some chambers
 
+#- pull out the maximum temperatures for each chamber
+max_temps_IR <- subset(summaryBy(TargTempC_Avg~chamber+HW_Treatment,data=dat.hw,FUN=max,na.rm=T),HW_Treatment!="C")
+max_temps_Tleaf1 <- subset(summaryBy(LeafT_Avg.1.~chamber+HW_Treatment,data=dat.hw,FUN=max,na.rm=T),HW_Treatment!="C")
+max_temps_Tleaf2 <- subset(summaryBy(LeafT_Avg.2.~chamber+HW_Treatment,data=dat.hw,FUN=max,na.rm=T),HW_Treatment!="C")
+
+names(max_temps_IR) <- c("chamber","HW_treatment","Tleaf")
+names(max_temps_Tleaf1) <- c("chamber","HW_treatment","Tleaf")
+names(max_temps_Tleaf2) <- c("chamber","HW_treatment","Tleaf")
+
+max_Tleaf_3 <- rbind(max_temps_IR,max_temps_Tleaf1,max_temps_Tleaf2)
+
+max_Tleaf <- summaryBy(Tleaf~chamber,data=max_Tleaf_3,FUN=max)
+
+#- get T50 prior to the heatwave
+thermo.pre <- summaryBy(T50_mean~chamber,
+                        data=subset(thermo,HW_treatment!="control" & Date==as.Date("2016-10-19")),
+                                    FUN=mean,keep.names=T)
+thermo.post <- summaryBy(T50_mean~chamber,
+                        data=subset(thermo,HW_treatment!="control"),
+                        FUN=max,keep.names=T)
+names(thermo.post) <- c("chamber","T50_max")
+compare1 <- merge(max_Tleaf,thermo.pre,by="chamber")
+compare <- merge(compare1,thermo.post,by="chamber")
+compare$exceed_pre <- ifelse(compare$Tleaf.max>compare$T50_mean,"yes","no")
+compare$exceed_max <- ifelse(compare$Tleaf.max>compare$T50_max,"yes","no")
+
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
 
 
 
@@ -432,7 +481,7 @@ interactionMeans(F1, factors=c("HW_treatment","DateFac"))
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 #- calculate the percentage of leaves damaged by the heatwave. (data need uploading to HIEv)
-harvest <- read.csv("Data/WTC_TEMP_CM_PARRA_CANOPY-HARVEST-HEATWAVE_20161121_L0.csv")
+harvest <- read.csv("Data/WTC_TEMP-PARRA_CM_CANOPY-HARVEST-HEATWAVE_20161121_L0.csv")
 harvest$LeafArea <- with(harvest,Leaf_DW*SLA/10000) # calculate total leaf area (m2) for each canopy layer
 harvest$LeafArea_damage <- with(harvest,HW_damage_DW*SLA/10000) # calculate total leaf area (m2) for each canopy layer damaged by the heatwave
 harvest.sum <- summaryBy(LeafArea+LeafArea_damage~chamber,data=harvest,FUN=sum,keep.names=T) # sumacross the three canopy layers
