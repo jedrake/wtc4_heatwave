@@ -1,6 +1,6 @@
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
-#- Makes Figure 3 (T50, temperatures)
+#- Makes Figure 3 (T50) and Figure 4, temperatures)
 #- merges air and leaf temperature datasets, also plots T50
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
@@ -87,9 +87,11 @@ thermo.m2 <- summaryBy(T50_mean~Date+HW_treatment,data=thermo,FUN=c(mean,se))
 
 palette(c("blue","red"))
 
+
+##---- Make Figure 3
 #-- plot T50 vs. time
 #windows(50,60)
-pdf("Output/Figure3a_T50.pdf",width=10.5)
+pdf("Output/Figure3_T50.pdf",width=10.5)
 par(mfrow=c(1,2),cex.lab=1.6,xpd=F,las=1,mar=c(5,7,3,1))
 plotBy(T50_mean.mean~Date|HW_treatment,data=thermo.m2,type="o",pch=16,ylim=c(47,52),cex=1.5,legend=F,
        ylab=expression(Leaf~thermal~threshold~(T[50]*";"~degree*C)))
@@ -125,7 +127,7 @@ dev.off()
 
 
 
-
+##---- Make Figure 4
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 #- read in the flux data, calculate what leaf temperatures SHOULD have been, to add to plot of Tleaf vs. Tair
@@ -156,11 +158,11 @@ pred1 <- suppressMessages(PhotosynEB(Tair=c(test$Tair_al,44.6),VPD=c(test$VPD,5.
 
 
 #-----------------------------------------------------------------------------------------------------------
-#- Figure 3b
+#- Figure 4a
 
 #- plot IR leaf temperatures relative to air temperature, as density plot 
 
-pdf("Output/Figure3b_Tair_Tleaf.pdf")
+pdf("Output/Figure4a_Tair_Tleaf.pdf")
 par(mar=c(5,6,1,1))
 blues.ramp <- colorRampPalette(brewer.pal(9,"Blues")[-1],alpha=T)
 reds.ramp <- colorRampPalette(brewer.pal(9,"Reds")[-1],alpha=T)
@@ -187,7 +189,7 @@ axis(1,tck=0.025,labels=T);axis(2,tck=0.025,labels=T,las=1);axis(4,tck=0.025,lab
 
 abline(0,1,lty=3,lwd=3,col="darkgrey")
 lm1 <- lm(TargTempC_Avg~Tair_al+I(Tair_al^2),data=subset(dat.hw,PPFD_Avg>=500))
-legend("topleft",legend=letters[2],cex=1.4,bty="n")
+legend("topleft",legend=letters[1],cex=1.4,bty="n")
 
 xvals <-seq(11,45,length.out=101)
 predictions <- predict.lm(lm1,newdata=data.frame(Tair_al = seq(11,45,length.out=101)),interval="prediction")
@@ -216,7 +218,7 @@ dev.off()
 
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
-#- Figure 3 c-d.
+#- Figure 4 b-c.
 
 #- calculate daily maximum Tleaf (IR) and Tair during the heatwave
 
@@ -240,13 +242,13 @@ hw_Temps <- c(subset(dat.hw,HW_Treatment=="HW" & PPFD_Avg > 500 & hour >= 12 & h
 amb_Temps <- c(subset(dat.hw,HW_Treatment=="C" & PPFD_Avg > 500 & hour >= 12 & hour <= 16)$TargTempC_Avg,subset(dat.hw,HW_Treatment=="C" & PPFD_Avg > 500 & hour >= 12 & hour <= 16)$LeafT_Avg.1.,subset(dat.hw,HW_Treatment=="C" & PPFD_Avg > 500 & hour >= 12 & hour <= 16)$LeafT_Avg.2.)
 
 
-pdf("Output/Figure3cd-Tair_Tleaf.pdf",width=4)
+pdf("Output/Figure4bc-Tair_Tleaf.pdf",width=4)
 par(mfrow=c(2,1),mar=c(2.5,0,0,0),oma=c(2,1,1,8),las=1,cex.lab=2)
 ylims=c(0,0.25)
 hist(amb_Temps,xlim=c(10,55),main="",freq=F,xlab="",yaxt="n",xaxs="i", yaxs="i",ylim=ylims,col="blue");box()
 legend("top","Control",bty="n")
 axis(4)
-legend("topleft",legend=letters[3],cex=1.4,bty="n")
+legend("topleft",legend=letters[2],cex=1.4,bty="n")
 abline(v=48.5,lty=2,col="blue")
 
 hist(hw_Temps,xlim=c(10,55),main="",freq=F,xlab="",yaxt="n",xaxs="i",yaxs="i",ylim=ylims,col="red");box()
@@ -255,7 +257,7 @@ abline(v=48.5,lty=2,col="blue")
 abline(v=51.5,lty=2,col="red")
 legend("top","Heatwave",bty="n")
 axis(4)
-legend("topleft",legend=letters[4],cex=1.4,bty="n")
+legend("topleft",legend=letters[3],cex=1.4,bty="n")
 
 #title(xlab=expression(T[leaf]~(degree*C)),outer=T,cex.lab=1.5,line=0.5)
 title(ylab=expression(Density~of~T[leaf]),outer=T,cex.lab=2,line=-17)
