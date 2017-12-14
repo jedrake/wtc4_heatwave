@@ -19,7 +19,7 @@ figure_diamHeight_timeseries <- function(hddata,type="chamber"){
   palette(c("#00A2FF", "#F5690C", "#1C41D6", "#FF0A0A")) #shades of blue and red
   
   
-  pdf("Output/FigureS5-Growth_4treatments.pdf",width=5)
+  pdf("Output/FigureS9-Growth_4treatments.pdf",width=5)
   par(mfrow=c(2,1),mar=c(0,7,0,1),oma=c(6,0,5,0),cex.lab=1.3)
   #---
   #- plot diameter, then height
@@ -185,7 +185,7 @@ figure_diamHeight_timeseries2trt <- function(hddata,type="chamber"){
   #palette(c("#00A2FF", "#F5690C", "#1C41D6", "#FF0A0A")) #shades of blue and red
   palette(c( "#1C41D6", "#FF0A0A"))
   
-  pdf("Output/FigureS5-Growth_2treatments.pdf",width=5)
+  pdf("Output/FigureS9-Growth_2treatments.pdf",width=5)
   par(mfrow=c(2,1),mar=c(0,7,0,1),oma=c(6,0,5,0),cex.lab=1.3)
   #---
   #- plot diameter, then height

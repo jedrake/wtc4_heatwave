@@ -12,7 +12,7 @@
 #-----------------------------------------------------------------------------------------------------------
 
 #- Load libraries for analysis. This will install many libraries. Some non-standard libraries many need to
-#    be installed manually.
+#    be installed manually. If you get error messages, follow the instructions in the comments of loadLibraries.R.
 source("R/loadLibraries.R")
 
 #- Download the data. This will place csv files in "/Data"
@@ -36,33 +36,34 @@ download_data()
 
 #- Run this script to process and plot the whole-tree chamber flux data (Fig. 2)
 #    creates a pdf in "Output" named Figure2_fluxes.pdf .
+#    This also creates Figure S4
 source("R/Figure2_fluxes.R")
 #-----------------------------------------------------------------------------------------------------------
 
 
 
 #-----------------------------------------------------------------------------------------------------------
-#- F I G U R E   3
+#- F I G U R E S  3-4
 #-----------------------------------------------------------------------------------------------------------
 
 #- Run this script to process and plot the T50 and temperature data (Fig. 3)
 #    creates several pdfs in "Output" named Figure3-X.pdf .
 #    Also makes Figure S3 (met and leaf temperature data)
-source("R/Figure3_T50_temperatures.R")
+source("R/Figure3to4_T50_temperatures.R")
 #-----------------------------------------------------------------------------------------------------------
 
 
 
 #-----------------------------------------------------------------------------------------------------------
-#- F I G U R E   4
+#- F I G U R E   5
 #-----------------------------------------------------------------------------------------------------------
 
-#- Run this script to do the model evaluation (Figure 4). This takes a few minutes.
+#- Run this script to do the model evaluation (Figure 5). This takes a few minutes.
 #    This generates many error messages where the leaf energy balance had two solutions.
 #    For the purpose of this work, these errors can be safely ignored.
 #    To generate the supplemental plots for the Leuning and Ball-Berry models (Figs. S8-S9), uncomment and run code
 #      at the end of the Figure4-model.R script.
-source("R/Figure4_modeling.R")
+source("R/Figure5_modeling.R")
 #-----------------------------------------------------------------------------------------------------------
 
 
@@ -89,9 +90,9 @@ source("R/plot_VWC_TDR.R")
 #- Run this script to plot the neutron probe measurements of soil water content (Fig. S2)
 source("R/plot_neutron_probe.R")
 
-#- Run this script to plot leaf water potential and branch and stem hydraulics (Figs. S4-S5)
+#- Run this script to plot leaf water potential and branch and stem hydraulics (Figs. S6-S7)
 source("R/plot_midday_LWP.R")
 
-#- Run this script to plot diameter and height increment (Figure S7).
+#- Run this script to plot diameter and height increment (Figure S9).
 source("R/plot_growth_heatwave.R")
 #-----------------------------------------------------------------------------------------------------------
