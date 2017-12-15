@@ -90,7 +90,7 @@ palette(c("blue","red"))
 
 ##---- Make Figure 3
 #-- plot T50 vs. time
-#windows(50,60)
+windows(50,60)
 pdf("Output/Figure3_T50.pdf",width=10.5)
 par(mfrow=c(1,2),cex.lab=1.6,xpd=F,las=1,mar=c(5,7,3,1))
 plotBy(T50_mean.mean~Date|HW_treatment,data=thermo.m2,type="o",pch=16,ylim=c(47,52),cex=1.5,legend=F,
@@ -106,7 +106,7 @@ legend("topright",xpd=NA,pch=16,col=palette()[1:2],ncol=1,cex=1.2,
        legend=c("Control","Heatwave"))
 plotBy(T50_mean.mean~Date|HW_treatment,data=thermo.m2,type="o",pch=16,ylim=c(47,52),cex=1.5,legend=F,add=T,
        ylab=expression(Leaf~thermotolerance~(T[50]*";"~degree*C)))
-legend("topleft",legend=letters[1],cex=1.4,bty="n")
+legend("topleft",legend=paste("(",letters[1],")",sep=""),cex=1.5,bty="n",text.font=2)
 text(x=thermo.m2$Date[1]+5,y=47,"Pre-heatwave",cex=1.2)
 text(x=thermo.m2$Date[1]+23,y=47,"Post-heatwave",cex=1.2)
 
@@ -114,7 +114,7 @@ text(x=thermo.m2$Date[1]+23,y=47,"Post-heatwave",cex=1.2)
 plotBy(T50_mean~TargTempC_Avg.mean|HW_treatment,data=thermo,type="p",pch=16,ylim=c(47,52),cex=1.5,legend=F,
        ylab=expression(Leaf~thermal~threshold~(T[50]*";"~degree*C)),
        xlab=expression(Canopy~temperature~(T[L-IR]*";"~degree*C)))
-legend("topleft",legend=letters[2],cex=1.4,bty="n")
+legend("topleft",legend=paste("(",letters[2],")",sep=""),cex=1.5,bty="n",text.font=2)
 lm1 <- lm(T50_mean~TargTempC_Avg.mean,data=thermo)
 ablineclip(lm1,x1=min(thermo$TargTempC_Avg.mean),x2=max(thermo$TargTempC_Avg.mean))
 ellipse(c(21,50.2),shape=matrix(c(12,0.1,0.1,12),nrow=2,ncol=2),radius=c(0.7,0.2))
@@ -189,7 +189,7 @@ axis(1,tck=0.025,labels=T);axis(2,tck=0.025,labels=T,las=1);axis(4,tck=0.025,lab
 
 abline(0,1,lty=3,lwd=3,col="darkgrey")
 lm1 <- lm(TargTempC_Avg~Tair_al+I(Tair_al^2),data=subset(dat.hw,PPFD_Avg>=500))
-legend("topleft",legend=letters[1],cex=1.4,bty="n")
+legend("topleft",legend=paste("(",letters[1],")",sep=""),cex=1.5,bty="n",text.font=2)
 
 xvals <-seq(11,45,length.out=101)
 predictions <- predict.lm(lm1,newdata=data.frame(Tair_al = seq(11,45,length.out=101)),interval="prediction")
@@ -248,7 +248,7 @@ ylims=c(0,0.25)
 hist(amb_Temps,xlim=c(10,55),main="",freq=F,xlab="",yaxt="n",xaxs="i", yaxs="i",ylim=ylims,col="blue");box()
 legend("top","Control",bty="n")
 axis(4)
-legend("topleft",legend=letters[2],cex=1.4,bty="n")
+legend("topleft",legend=paste("(",letters[2],")",sep=""),cex=1.5,bty="n",text.font=2)
 abline(v=48.5,lty=2,col="blue")
 
 hist(hw_Temps,xlim=c(10,55),main="",freq=F,xlab="",yaxt="n",xaxs="i",yaxs="i",ylim=ylims,col="red");box()
@@ -257,7 +257,7 @@ abline(v=48.5,lty=2,col="blue")
 abline(v=51.5,lty=2,col="red")
 legend("top","Heatwave",bty="n")
 axis(4)
-legend("topleft",legend=letters[3],cex=1.4,bty="n")
+legend("topleft",legend=paste("(",letters[3],")",sep=""),cex=1.5,bty="n",text.font=2)
 
 #title(xlab=expression(T[leaf]~(degree*C)),outer=T,cex.lab=1.5,line=0.5)
 title(ylab=expression(Density~of~T[leaf]),outer=T,cex.lab=2,line=-17)

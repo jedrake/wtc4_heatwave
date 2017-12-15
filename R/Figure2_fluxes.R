@@ -88,12 +88,12 @@ legend("topleft",legend=c(expression(T[air]),"VPD"),lty=c(1,2),lwd=c(2,2),col="r
 
 
 #- add shaded rectangle for heatwave
-dates <- as.POSIXct(c("2016-10-30 24:00","2016-11-3 24:00"),format="%Y-%m-%d %R")
+dates <- as.POSIXct(c("2016-10-31 02:00","2016-11-3 24:00"),format="%Y-%m-%d %R")
 rect(xleft=dates[1],ybottom=-4,xright=dates[2],ytop=55,col="darkgrey",density=7) 
 #- add legend
 legend(x=starttime+212000,y=59,xpd=NA,lwd=3,col=c("blue","red"),ncol=4,cex=1.5,bty="n",
        legend=c("Control","Heatwave"))
-legend("topright",legend=letters[1],cex=1.5,bty="n")
+legend("topright",legend=paste("(",letters[1],")",sep=""),cex=1.5,bty="n",text.font=2)
 plotBy(Tair_al.mean~DateTime_hr|HWtrt,data=wtc.m2.two,type="l",lwd=3,lty=1,col=c("blue","red"),
        ylab=expression(T[air]~(degree*C)),ylim=c(5,45),legend=F,add=T)
 
@@ -110,7 +110,7 @@ adderrorbars(x=wtc.m2.two$DateTime_hr,y=wtc.m2.two$Photo.mean,SE=wtc.m2.two$Phot
              direction="updown",col=wtc.m2.two$HWtrt,barlen=0,lwd=0.5)
 plotBy(Photo.mean~DateTime_hr|HWtrt,data=wtc.m2.two,legend=F,type="l",lty=1,lwd=3.5,ylim=c(-1,12),las=1,add=T,col=c("blue","red"),
        ylab=expression(A[canopy]~(mu*mol~CO[2]~m^-2~s^-1)))
-legend("topright",legend=letters[2],cex=1.5,bty="n")
+legend("topright",legend=paste("(",letters[2],")",sep=""),cex=1.5,bty="n",text.font=2)
 
 
 #-- plot photo bars
@@ -124,7 +124,7 @@ adderrorbars(x=xvals[,1],y=toplot.HW[1:2],SE=sums.m$Photo.g.se,
 axis(4)
 title(ylab=expression(Total~A[canopy]~(g~m^-2)),outer=T,line=-47,cex.lab=1.8,xpd=NA,adj=0.6) # y-axis label
 #text(x=xvals[,1]+0.6,y=-1.2,labels=c("C ","HW"),xpd=T,srt=00,pos=2,cex=1.7,xpd=NA)
-legend("topright",legend=letters[4],cex=1.5,bty="n")
+legend("topright",legend=paste("(",letters[4],")",sep=""),cex=1.5,bty="n",text.font=2)
 
 
 #---
@@ -137,7 +137,7 @@ adderrorbars(x=wtc.m2.two$DateTime_hr,y=wtc.m2.two$Trans.mean,SE=wtc.m2.two$Tran
              direction="updown",col=wtc.m2.two$HWtrt,barlen=0,lwd=0.5)
 plotBy(Trans.mean~DateTime_hr|HWtrt,data=wtc.m2.two,legend=F,type="l",lty=1,lwd=3.5,ylim=c(0,3),las=1,add=T,col=c("blue","red"),
        ylab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)));abline(h=0)
-legend("topright",legend=letters[3],cex=1.5,bty="n")
+legend("topright",legend=paste("(",letters[3],")",sep=""),cex=1.5,bty="n",text.font=2)
 
 #-- plot transpiration bars
 toplot.HW <- cbind(Cdat[,3],HW_dat[,3])
@@ -149,7 +149,7 @@ axis(1,at=xvals,labels=c("C","HW"),cex.axis=1.5,tck=0)
 adderrorbars(x=xvals[,1],y=toplot.HW[1:2],SE=sums.m$Trans.kg.se,
              direction="updown",col="black",barlen=0.05,lwd=0.5)
 axis(4)
-legend("topright",legend=letters[5],cex=1.5,bty="n")
+legend("topright",legend=paste("(",letters[5],")",sep=""),cex=1.5,bty="n",text.font=2)
 title(ylab=expression(Total~E[canopy]~(kg~m^-2)),outer=T,line=-47,cex.lab=1.8,xpd=NA,adj=0.1) # y-axis label
 
 

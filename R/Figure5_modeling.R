@@ -159,7 +159,7 @@ pred2$Tdiff <- with(pred2,Tleaf-Tair)
 #- Make 4-panel density plot, showing A and E for both treatments
 
 #windows(80,70)
-pdf("Output/Figure4-Model.pdf")
+pdf("Output/Figure5-Model.pdf")
 par(mar=c(0,0,0,0),oma=c(6,6,3,5),cex.lab=1.6,las=1,cex.axis=1.2)
 layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE), 
        widths=c(2,2), heights=c(2,2))
@@ -181,13 +181,13 @@ plot(testhigh$Photo~testhigh$TargTempC_Avg,col=dc,pch=16,cex=1,ylim=c(0,12),xlim
 points(ALEAF~Tleaf,data=subset(pred1,PPFD>PARlimit),pch=3,cex=ptsize,ylim=c(0,12),xlim=c(15,45))
 axis(1,tck=0.025,labels=F);axis(2,tck=0.025,labels=T);axis(4,tck=0.025,labels=F)
 legend("topright",c("Model","Control data","Heatwave data"),pch=c(3,16,16),col=c("black",dc[1],"red"),cex=1,bg="white")
-legend("topleft",letters[1],bty="n")
+legend("topleft",legend=paste("(",letters[1],")",sep=""),cex=1.5,bty="n",text.font=2)
 
 dc2 <- densCols(test.hwhigh$Photo,test.hwhigh$TargTempC_Avg,colramp=reds.ramp)
 plot(test.hwhigh$Photo~test.hwhigh$TargTempC_Avg,col=dc2,pch=16,cex=1,ylim=c(0,12),xlim=c(15,45),xaxt="n",yaxt="n",
      ylab="",xlab="")
 points(ALEAF~Tleaf,data=subset(pred2,PPFD>PARlimit),pch=3,cex=ptsize)
-legend("topleft",letters[2],bty="n")
+legend("topleft",legend=paste("(",letters[2],")",sep=""),cex=1.5,bty="n",text.font=2)
 axis(1,tck=0.025,labels=F);axis(2,tck=0.025,labels=F);axis(4,tck=0.025,labels=T)
 
 
@@ -195,14 +195,14 @@ axis(1,tck=0.025,labels=F);axis(2,tck=0.025,labels=F);axis(4,tck=0.025,labels=T)
 dc3 <- densCols(testhigh$Trans,testhigh$TargTempC_Avg,colramp=blues.ramp)
 plot(testhigh$Trans~testhigh$TargTempC_Avg,col=dc3,pch=16,cex=1,ylim=c(0,4),xlim=c(15,45),xaxt="n",yaxt="n")
 points(ELEAF~Tleaf,data=subset(pred1,PPFD>PARlimit & failed==F),pch=3,cex=ptsize)
-legend("topleft",letters[3],bty="n")
+legend("topleft",legend=paste("(",letters[3],")",sep=""),cex=1.5,bty="n",text.font=2)
 axis(1,tck=0.025,labels=T);axis(2,tck=0.025,labels=T);axis(4,tck=0.025,labels=F)
 
 
 dc4 <- densCols(test.hwhigh$Trans,test.hwhigh$TargTempC_Avg,colramp=reds.ramp)
 plot(test.hwhigh$Trans~test.hwhigh$TargTempC_Avg,col=dc4,pch=16,cex=1,ylim=c(0,4),xlim=c(15,45),xaxt="n",yaxt="n")
 points(ELEAF~Tleaf,data=subset(pred2,PPFD>PARlimit & failed==F),pch=3,cex=ptsize)
-legend("topleft",letters[4],bty="n")
+legend("topleft",legend=paste("(",letters[4],")",sep=""),cex=1.5,bty="n",text.font=2)
 axis(1,tck=0.025,labels=T);axis(2,tck=0.025,labels=F);axis(4,tck=0.025,labels=T)
 
 
