@@ -63,31 +63,65 @@ if(!r)stop("Install the geneplotter package. See code in R/loadLibraries.R for d
 
 
 
-#- function to download data, either from HIEv or from published repository
-download_data <- function(){
-  
-  #- get the combined temperature dataset (thermocouples, infrared, air temperature)
-  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_TEMPERATURES-COMBINED_20161010-20161123_L1.csv"),topath="Data")
-  
-  #- get the whole tree flux dataset.
-  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv"),topath="Data")
 
-  #- get hydraulics datasets. 
-  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_PARRA_KLEAF-HEATWAVE_20161104_L0.csv"),topath="Data")
-  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_NATIVE-EMBOLISM-HEATWAVE_20161018-20161104_L0_v2.csv"),topath="Data")
-  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_WATERPOTENTIAL-HEATWAVE_20161019-20161107_L0.csv"),topath="Data")
-  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_TURGOR-LOSS-POINT-HEATWAVE_20161104_L0.csv"),topath="Data")
+
+#------------------------------------------------------------------------------------------------------------------
+#- function to download the zipfile containing all of the data from the library at Western Sydney University 
+get_zipdata <- function(){
   
-  #- get T50 data
-  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_T50-CI_20161019-20161117_L1.csv"),topath="Data")
   
-  #- get the canopy harvest data. 
-  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_CANOPY-HARVEST-HEATWAVE_20161121_L0.csv"),topath="Data")
+  #- check if the data and output directories exist. If they don't, create them.
+  #dir.create(file.path("Data"),showWarnings=F)
+  dir.create(file.path("Output"),showWarnings=F)
   
-  #- get the diameter and height data
-  downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_TREE-HEIGHT-DIAMETER_20151028-20161124_L1.csv"),topath="Data")
+  #- define the file name and the URL to the data
+  zipfn <- "WTC_TEMP-PARRA_HEATWAVE-FLUX-PACKAGE_L1.zip"
+  url <- "http://hie-pub.westernsydney.edu.au/07fcd9ac-e132-11e7-b842-525400daae48/WTC_TEMP-PARRA_HEATWAVE-FLUX-PACKAGE_L1.zip"
+  
+  #- download the data, if there is no local copy
+  failureFlag <- 0
+  if(!file.exists(zipfn)){
+    failureFlag <- try(download.file(url, zipfn, mode="wb"))
+  }
+  
+  #- unzip the data
+  unzip(zipfn, exdir=".", overwrite=TRUE)
+  
+  #- print an informative error message if downloading fails
+  if(failureFlag !=0){
+    message("Download failed. Perhaps try downloading the data manually by pointing a web-browser to (http://doi.org/10.4225/35/5a36f61f150f3")
+  }
   
 }
+#------------------------------------------------------------------------------------------------------------------
+# 
+# 
+# 
+# #- function to download data, either from HIEv or from published repository
+# download_data <- function(){
+#   
+#   #- get the combined temperature dataset (thermocouples, infrared, air temperature)
+#   downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_TEMPERATURES-COMBINED_20161010-20161123_L1.csv"),topath="Data")
+#   
+#   #- get the whole tree flux dataset.
+#   downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv"),topath="Data")
+# 
+#   #- get hydraulics datasets. 
+#   downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_PARRA_KLEAF-HEATWAVE_20161104_L0.csv"),topath="Data")
+#   downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_NATIVE-EMBOLISM-HEATWAVE_20161018-20161104_L0_v2.csv"),topath="Data")
+#   downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_WATERPOTENTIAL-HEATWAVE_20161019-20161107_L0.csv"),topath="Data")
+#   downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_TURGOR-LOSS-POINT-HEATWAVE_20161104_L0.csv"),topath="Data")
+#   
+#   #- get T50 data
+#   downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_T50-CI_20161019-20161117_L1.csv"),topath="Data")
+#   
+#   #- get the canopy harvest data. 
+#   downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_CANOPY-HARVEST-HEATWAVE_20161121_L0.csv"),topath="Data")
+#   
+#   #- get the diameter and height data
+#   downloadHIEv(hiev=searchHIEv("WTC_TEMP-PARRA_CM_TREE-HEIGHT-DIAMETER_20151028-20161124_L1.csv"),topath="Data")
+#   
+# }
 
 
 

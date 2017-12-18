@@ -9,7 +9,8 @@
 
 #-----------------------------------------------------------------------------------------------------------
 #- Read in and process the flux data associated with the heatwave.
-wtc <- read.csv("Data/WTC_TEMP-PARRA_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv")
+wtc <- read.csv("Data/WTC_TEMP-PARRA_CM_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv")
+
 wtc$DateTime <- as.POSIXct(wtc$DateTime_hr,format="%Y-%m-%d %T",tz="GMT")
 
 #-- create hourly values for subsequent averaging of fluxes
@@ -295,7 +296,7 @@ title(ylab=expression(WUE[i]~(mu*mol~CO[2]~"/"~mmol~H[2]*O)),outer=F,cex.lab=2)
 
 
 #- Read in the data, do some formatting.
-dat.all <- read.csv("Data/WTC_TEMP-PARRA_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv")
+dat.all <- read.csv("Data/WTC_TEMP-PARRA_CM_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv")
 dat.all$DateTime_hr <- as.POSIXct(dat.all$DateTime_hr,format="%Y-%m-%d %T",tz="GMT")
 dat.all$Tdiff <- with(dat.all,TargTempC_Avg-Tair_al)
 

@@ -15,8 +15,8 @@
 #    be installed manually. If you get error messages, follow the instructions in the comments of loadLibraries.R.
 source("R/loadLibraries.R")
 
-#- Download the data. This will place csv files in "/Data"
-download_data()
+#- Download the data. This will place csv files in "/data"
+get_zipdata()
 #-----------------------------------------------------------------------------------------------------------
 
 
@@ -59,10 +59,10 @@ source("R/Figure3to4_T50_temperatures.R")
 #-----------------------------------------------------------------------------------------------------------
 
 #- Run this script to do the model evaluation (Figure 5). This takes a few minutes.
-#    This generates many error messages where the leaf energy balance had two solutions.
+#    This generates some error messages where the leaf energy balance had two solutions.
 #    For the purpose of this work, these errors can be safely ignored.
 #    To generate the supplemental plots for the Leuning and Ball-Berry models (Figs. S8-S9), uncomment and run code
-#      at the end of the Figure4-model.R script.
+#      at the end of the Figure5-model.R script.
 source("R/Figure5_modeling.R")
 #-----------------------------------------------------------------------------------------------------------
 
@@ -88,7 +88,7 @@ source("R/Figure5_modeling.R")
 source("R/plot_VWC_TDR.R")
 
 #- Run this script to plot the neutron probe measurements of soil water content (Fig. S2)
-source("R/plot_neutron_probe.R")
+#source("R/plot_neutron_probe.R") # data are not included in package
 
 #- Run this script to plot leaf water potential and branch and stem hydraulics (Figs. S6-S7)
 source("R/plot_midday_LWP.R")

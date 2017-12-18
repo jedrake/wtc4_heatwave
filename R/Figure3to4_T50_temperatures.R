@@ -9,7 +9,8 @@
 
 #-----------------------------------------------------------------------------------------------------------
 #- read in the file of combined temperatures from HIEv.
-dat.raw2 <- data.frame(data.table::fread("Data/WTC-TEMP_PARRA-CM-TEMPERATURES_COMBINED-20161010-20161123_L1.csv"))
+dat.raw2 <- data.frame(data.table::fread("Data/WTC_TEMP-PARRA_CM_TEMPERATURES-COMBINED_20161010-20161123_L1.csv"))
+
 dat.raw2$DateTime <- as.POSIXct(dat.raw2$DateTime,format="%Y-%m-%d %T",tz="GMT")
 dat.raw2$Date <- as.Date(dat.raw2$DateTime)
 
@@ -131,7 +132,9 @@ dev.off()
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 #- read in the flux data, calculate what leaf temperatures SHOULD have been, to add to plot of Tleaf vs. Tair
-dat <- read.csv("Data/WTC_TEMP-PARRA_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv")
+#dat <- read.csv("Data/WTC_TEMP-PARRA_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv")
+dat <- read.csv("Data/WTC_TEMP-PARRA_CM_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv")
+
 dat$DateTime_hr <- as.POSIXct(dat$DateTime_hr,format="%Y-%m-%d %T",tz="GMT")
 names(dat)[4] <- "HW_Treatment"
 
@@ -313,7 +316,7 @@ compare$exceed_max <- ifelse(compare$Tleaf.max>compare$T50_max,"yes","no")
 #- make a supplementary figure showing the met data during the flux period
 
 #- read in the flux data
-wtc1 <- read.csv("Data/WTC_TEMP-PARRA_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv")
+wtc1 <- read.csv("Data/WTC_TEMP-PARRA_CM_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv")
 #wtc1 <- read.csv("Data/WTC_TEMP-PARRA_WTCFLUX_20161028-20161115_L0.csv")
 wtc1$DateTime <- as.POSIXct(wtc1$DateTime,format="%Y-%m-%d %T",tz="GMT")
 #wtc1$VPD <- RHtoVPD(RH=wtc1$RH_al,TdegC=wtc1$Tair_al)

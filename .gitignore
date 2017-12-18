@@ -2,6 +2,11 @@
 .Rhistory
 .Rapp.history
 wtc4_heatwave.Rproj
+WTC_TEMP-PARRA_HEATWAVE-FLUX-PACKAGE_L1.zip
+bag-info.txt
+bagit.txt
+manifest-md5.txt
+manifest-sha1.txt
 
 # Folders of data, output, and documents
 /Data

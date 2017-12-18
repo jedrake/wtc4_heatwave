@@ -9,7 +9,8 @@
 
 #----------------------------------------------------------------------------------------------------------
 #-- read in the midday leaf water potential data, average across treatments and dates
-lwp1 <- read.csv("Data/WTC_TEMP_CM_PARRA_WATERPOTENTIAL-HEATWAVE_20161019-20161107_L0.csv")
+lwp1 <- read.csv("Data/WTC_TEMP-PARRA_CM_WATERPOTENTIAL-HEATWAVE_20161019-20161107_L0.csv")
+
 lwp1$Date <- as.Date(lwp1$Date)
 
 #- middays
@@ -35,7 +36,7 @@ lwp.predawn.m.ele <- subset(lwp.predawn.m,T_treatment=="elevated")
 
 #----------------------------------------------------------------------------------------------------------
 #-- read in the turgor loss point measurements, get average for each T_treatment
-tlp1 <- read.csv("Data/WTC_TEMP_CM_PARRA_TURGOR-LOSS-POINT-HEATWAVE_20161104_L0.csv")
+tlp1 <- read.csv("Data/WTC_TEMP-PARRA_CM_TURGOR-LOSS-POINT-HEATWAVE_20161104_L0.csv")
 tlp <- summaryBy(TLP~chamber+T_treatment+HW_treatment,data=tlp1,FUN=mean,keep.names=T) # average over subreplicates
 
 tlp.m <- summaryBy(TLP~T_treatment,data=tlp,FUN=c(mean,se)) # average over chambers (real reps)
@@ -44,7 +45,7 @@ tlp.m <- summaryBy(TLP~T_treatment,data=tlp,FUN=c(mean,se)) # average over chamb
 
 #----------------------------------------------------------------------------------------------------------
 #-- read in the Kleaf data, get average for each T_treatment and HW_treatment combination
-Kleaf1 <- read.csv("Data/WTC_TEMP_CM_PARRA_KLEAF-HEATWAVE_20161104_L0.csv")
+Kleaf1 <- read.csv("Data/WTC_TEMP-PARRA_CM_PARRA_KLEAF-HEATWAVE_20161104_L0.csv")
 Kleaf <- summaryBy(Kleaf~chamber+T_treatment+HW_treatment,data=Kleaf1,FUN=mean,keep.names=T) # average over subreplicates
 
 Kleaf.m <- summaryBy(Kleaf~T_treatment+HW_treatment,data=Kleaf,FUN=c(mean,se)) # average over chambers (real reps)
@@ -152,7 +153,7 @@ dev.off()
 #----------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------
 #- Plot branch conductivity and leaf hydraulic conductance
-embolism <- read.csv("Data/WTC_TEMP_CM_PARRA_NATIVE-EMBOLISM-HEATWAVE_20161018-20161104_L0_v2.csv")
+embolism <- read.csv("Data/WTC_TEMP-PARRA_CM_NATIVE-EMBOLISM-HEATWAVE_20161018-20161104_L0_v2.csv")
 embolism$combotrt <- factor(paste(embolism$T_treatment,embolism$HW_treatment,sep="_"))
 embolism$Date <- as.Date(embolism$Date)
 embolism$phase <- factor(ifelse(embolism$Date == as.Date("2016-10-18"),"pre","post"))

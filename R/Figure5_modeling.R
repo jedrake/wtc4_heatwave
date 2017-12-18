@@ -5,7 +5,7 @@
 #-----------------------------------------------------------------------------------------------------------
 
 #- Read in the data, do some formatting.
-dat.all <- read.csv("Data/WTC_TEMP-PARRA_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv")
+dat.all <- read.csv("Data/WTC_TEMP-PARRA_CM_WTCFLUX-CANOPYTEMP_20161029-20161115_L0.csv")
 dat.all$DateTime_hr <- as.POSIXct(dat.all$DateTime_hr,format="%Y-%m-%d %T",tz="GMT")
 dat.all$Tdiff <- with(dat.all,TargTempC_Avg-Tair_al)
 
