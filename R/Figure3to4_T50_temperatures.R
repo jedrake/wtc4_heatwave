@@ -500,7 +500,7 @@ harvest.sum$prop <- with(harvest.sum,LeafArea_damage/LeafArea)*100
 summaryBy(prop~HWtrt,data=harvest.sum)
 
 #- make barchart of damage
-pdf("Output/FigureS4_damage.pdf")
+pdf("Output/FigureS8_damage.pdf")
 par(mar=c(6,6,1,1))
 damage.m <- summaryBy(prop~HWtrt,data=harvest.sum,FUN=c(mean,se))
 xvals <- barplot(damage.m$prop.mean, beside=T, ylab="", names.arg=rep("",2),yaxt="n",space=0,
