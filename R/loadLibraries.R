@@ -43,14 +43,15 @@ Library(gplots)
 Library(sp)
 
 # do this once
-#devtools::install_bitbucket("remkoduursma/plotby")
+r <- require(plotBy)
+if(!r) devtools::install_bitbucket("remkoduursma/plotby")
 library(plotBy)
 
 #- load HIEv, load token
-r <- require(HIEv)
-if(!r)stop("Install the HIEv R package from bitbucket.org/remkoduursma/hiev")
-#devtools::install_bitbucket("remkoduursma/hiev")
-setToken(tokenfile="HIEv_token.txt")
+# r <- require(HIEv)
+# if(!r)stop("Install the HIEv R package from bitbucket.org/remkoduursma/hiev")
+# #devtools::install_bitbucket("remkoduursma/hiev")
+# setToken(tokenfile="HIEv_token.txt")
 
 
 
@@ -59,7 +60,7 @@ setToken(tokenfile="HIEv_token.txt")
 #source("https://bioconductor.org/biocLite.R")
 #biocLite("geneplotter")
 r <- require(geneplotter)
-if(!r)stop("Install the geneplotter package. See code in R/loadLibraries.R for details.")
+if(!r)stop("Install the geneplotter package. See code in R/loadLibraries.R at ~line 60 for details.")
 
 
 
