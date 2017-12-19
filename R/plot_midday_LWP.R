@@ -172,7 +172,7 @@ E_HW <- embolism.m[which(embolism.m$combotrt=="elevated_heatwave"),]
 
 toplot   <- as.matrix(rbind(A_c[,6:7], A_HW[,6:7], E_c[,6:7], E_HW[,6:7]))
 ses <-  as.matrix(rbind(A_c[,9:10], A_HW[,9:10], E_c[,9:10], E_HW[,9:10]))
-rownames(toplot) <- c("A_c", "A_HW", "E_c","E_HW")
+#rownames(toplot) <- c("A_c", "A_HW", "E_c","E_HW")
 colnames(toplot) <- c("Pre","Post")
 
 
