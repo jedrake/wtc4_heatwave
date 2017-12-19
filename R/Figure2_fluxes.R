@@ -261,8 +261,8 @@ hw1$WUE <- with(hw1,Photo/Trans)
 #- Make 2-panel density plot, showing WUE for both treatments
 
 #windows(120,70)
-pdf("Output/FigureS4-WUE.pdf")
-par(mar=c(6,6,1,1),mfrow=c(1,2),oma=c(0,0,0,0),cex.lab=1.6,las=1,cex.axis=1.2)
+pdf("Output/FigureS5-WUE.pdf",width=12,height=6)
+par(mar=c(6,6,1,1),mfrow=c(1,2),oma=c(0,0,0,0),cex.lab=1.5,las=1,cex.axis=1.2)
 # layout(matrix(c(1,2), 1, 2, byrow = TRUE), 
 #        widths=c(2,2), heights=c(2,2))
 ptsize=1.2
