@@ -260,8 +260,8 @@ hw1$WUE <- with(hw1,Photo/Trans)
 #---------------------------------------------------------------------------
 #- Make 2-panel density plot, showing WUE for both treatments
 
-windows(120,70)
-#pdf("Output/Figure4-Model.pdf")
+#windows(120,70)
+pdf("Output/FigureS4-WUE.pdf")
 par(mar=c(6,6,1,1),mfrow=c(1,2),oma=c(0,0,0,0),cex.lab=1.6,las=1,cex.axis=1.2)
 # layout(matrix(c(1,2), 1, 2, byrow = TRUE), 
 #        widths=c(2,2), heights=c(2,2))
@@ -318,7 +318,7 @@ title(xlab=expression(E[canopy]~(mmol~H[2]*O~m^-2~s^-1)),ylab=expression(A[canop
 
 legend("topright",legend=c("15-20","20-25","25-30","30-35","35-40",">40"),col=colors,pch=16,title=expression(T[L-IR]))
 legend("topleft",letters[2],bty="n",cex=1.5)
-
+dev.off()
 #-----------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------
 
