@@ -61,7 +61,7 @@ source("R/Figure3to4_T50_temperatures.R")
 #- Run this script to do the model evaluation (Figure 5). This takes a few minutes.
 #    This generates some error messages where the leaf energy balance had two solutions.
 #    For the purpose of this work, these errors can be safely ignored.
-#    To generate the supplemental plots for the Leuning and Ball-Berry models (Figs. S8-S9), uncomment and run code
+#    To generate the supplemental plots for the Leuning and Ball-Berry models (Figs. S10-S11), uncomment and run code
 #      at the end of the Figure5-model.R script.
 source("R/Figure5_modeling.R")
 #-----------------------------------------------------------------------------------------------------------
@@ -85,10 +85,10 @@ source("R/Figure5_modeling.R")
 #-----------------------------------------------------------------------------------------------------------
 
 #- Run this script to plot the TDR measurements of soil water content (Fig. S1)
-source("R/plot_VWC_TDR.R")
+#source("R/plot_VWC_TDR.R") # data are not included in package, but are on HIEv.
 
 #- Run this script to plot the neutron probe measurements of soil water content (Fig. S2)
-#source("R/plot_neutron_probe.R") # data are not included in package
+#source("R/plot_neutron_probe.R") # data are not included in package, but are on HIEv.
 
 #- Run this script to plot leaf water potential and branch and stem hydraulics (Figs. S6-S7)
 source("R/plot_midday_LWP.R")
