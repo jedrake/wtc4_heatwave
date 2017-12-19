@@ -85,10 +85,10 @@ source("R/Figure5_modeling.R")
 #-----------------------------------------------------------------------------------------------------------
 
 #- Run this script to plot the TDR measurements of soil water content (Fig. S1)
-source("R/plot_VWC_TDR.R")
+#source("R/plot_VWC_TDR.R") # data are not included in package, but are on HIEv.
 
 #- Run this script to plot the neutron probe measurements of soil water content (Fig. S2)
-#source("R/plot_neutron_probe.R") # data are not included in package. Ask John for them.
+#source("R/plot_neutron_probe.R") # data are not included in package, but are on HIEv.
 
 #- Run this script to plot leaf water potential and branch and stem hydraulics (Figs. S6-S7)
 source("R/plot_midday_LWP.R")

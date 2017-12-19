@@ -91,7 +91,7 @@ palette(c("blue","red"))
 
 ##---- Make Figure 3
 #-- plot T50 vs. time
-windows(50,60)
+#windows(50,60)
 pdf("Output/Figure3_T50.pdf",width=10.5)
 par(mfrow=c(1,2),cex.lab=1.6,xpd=F,las=1,mar=c(5,7,3,1))
 plotBy(T50_mean.mean~Date|HW_treatment,data=thermo.m2,type="o",pch=16,ylim=c(47,52),cex=1.5,legend=F,
